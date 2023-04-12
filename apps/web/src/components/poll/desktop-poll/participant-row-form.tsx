@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { usePoll } from "../../poll-context";
 import { normalizeVotes } from "../mutations";
 import { ParticipantForm, ParticipantFormSubmitted } from "../types";
-import UserAvatar from "../user-avatar";
+import UserAvatar, { You } from "../user-avatar";
 import { VoteSelector } from "../vote-selector";
 import ControlledScrollArea from "./controlled-scroll-area";
 import { usePollContext } from "./poll-context";
@@ -67,7 +67,7 @@ const ParticipantRowForm: React.ForwardRefRenderFunction<
       className={clsx("flex h-12 shrink-0", className)}
     >
       <div className="flex items-center px-3" style={{ width: sidebarWidth }}>
-        <UserAvatar name={name ?? t("you")} isYou={isYou} showName={true} />
+        <You />
       </div>
       <Controller
         control={control}

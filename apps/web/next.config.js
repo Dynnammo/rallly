@@ -42,6 +42,22 @@ const nextConfig = {
         source: "/",
         destination: "/home",
       },
+      {
+        source: "/profile",
+        destination: "/s/profile",
+      },
+      {
+        source: "/preferences",
+        destination: "/s/preferences",
+      },
+      {
+        source: "/login",
+        destination: "/a/login",
+      },
+      {
+        source: "/register",
+        destination: "/a/register",
+      },
     ];
   },
   sentry: {

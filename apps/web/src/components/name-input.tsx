@@ -18,13 +18,13 @@ const NameInput: React.ForwardRefRenderFunction<
   NameInputProps
 > = ({ value, defaultValue, className, ...forwardProps }, ref) => {
   const { t } = useTranslation();
+  const [avatarName, setAvatarName] = React.useState(
+    value ?? defaultValue ?? "",
+  );
   return (
     <div className="relative flex items-center">
       {value ? (
-        <UserAvatar
-          name={value ?? defaultValue ?? ""}
-          className="absolute left-2"
-        />
+        <UserAvatar name={avatarName} className="absolute left-2" />
       ) : null}
       <input
         ref={ref}
@@ -38,6 +38,10 @@ const NameInput: React.ForwardRefRenderFunction<
         placeholder={t("yourName")}
         value={value}
         {...forwardProps}
+        onBlur={(e) => {
+          setAvatarName(e.target.value);
+          forwardProps?.onBlur?.(e);
+        }}
       />
     </div>
   );

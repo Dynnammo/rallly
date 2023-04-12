@@ -4,6 +4,7 @@ import { keyBy } from "lodash";
 import { useTranslation } from "next-i18next";
 import React from "react";
 
+import { AvatarColorContext } from "@/components/poll/user-avatar";
 import {
   decodeOptions,
   getBrowserTimeZone,
@@ -180,6 +181,10 @@ export const PollContextProvider: React.FunctionComponent<{
     );
   }
   return (
-    <PollContext.Provider value={contextValue}>{children}</PollContext.Provider>
+    <PollContext.Provider value={contextValue}>
+      <AvatarColorContext.Provider value={{ seed: contextValue.poll.id }}>
+        {children}
+      </AvatarColorContext.Provider>
+    </PollContext.Provider>
   );
 };

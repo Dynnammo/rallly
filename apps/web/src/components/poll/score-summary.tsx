@@ -10,6 +10,7 @@ export interface PopularityScoreProps {
   yesScore: number;
   ifNeedBeScore?: number;
   highlight?: boolean;
+  orientation?: "horizontal" | "vertical";
 }
 
 export const ConnectedScoreSummary: React.FunctionComponent<{
@@ -24,7 +25,11 @@ export const ConnectedScoreSummary: React.FunctionComponent<{
 };
 
 export const ScoreSummary: React.FunctionComponent<PopularityScoreProps> =
-  React.memo(function PopularityScore({ yesScore: score, highlight }) {
+  React.memo(function PopularityScore({
+    yesScore: score,
+    highlight,
+    orientation,
+  }) {
     const prevScore = usePrevious(score);
 
     const direction = prevScore !== undefined ? score - prevScore : 0;
@@ -34,13 +39,12 @@ export const ScoreSummary: React.FunctionComponent<PopularityScoreProps> =
         data-testid="popularity-score"
         className={clsx(
           "flex select-none items-center gap-1 px-2 text-sm font-bold tabular-nums",
-          {
-            "rounded-full bg-green-50 text-green-400": highlight,
-          },
-          { "text-slate-400": !highlight },
+          highlight ? "text-green-400" : "text-gray-400",
+          orientation === "vertical" ? "flex-col" : "",
+          {},
         )}
       >
-        <YesIcon className="-ml-1 inline-block h-4 transition-opacity" />
+        <YesIcon className="inline-block h-4 transition-opacity" />
         <AnimatePresence initial={false} exitBeforeEnter={true}>
           <m.span
             transition={{

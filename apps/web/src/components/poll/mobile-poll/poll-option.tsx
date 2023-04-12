@@ -158,7 +158,7 @@ const SummarizedParticipantList: React.FunctionComponent<{
           return (
             <UserAvatar
               key={i}
-              className="ring-1 ring-white"
+              className="ring-2 ring-white"
               name={participant.name}
             />
           );

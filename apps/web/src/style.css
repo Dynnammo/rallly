@@ -4,11 +4,11 @@
 
 @layer base {
   html {
-    @apply h-full bg-gray-50 font-sans text-base text-slate-800;
+    @apply h-full bg-gray-100 font-sans text-base text-slate-800;
   }
   body,
   #__next {
-    @apply h-full;
+    @apply h-full overscroll-none;
   }
   h1,
   h2,
@@ -33,12 +33,8 @@
   input,
   select,
   textarea {
-    @apply rounded outline-none transition-shadow focus:border-transparent focus:ring-2 focus:ring-slate-300;
-  }
-
-  a,
-  button {
-    @apply focus:ring-offset-2 focus:ring-offset-white;
+    @apply focus-visible:border-transparent focus-visible:shadow-none focus-visible:ring-1 focus-visible:ring-gray-400;
+    @apply rounded outline-none;
   }
 
   #floating-ui-root {
@@ -69,19 +65,19 @@
     @apply text-primary-600 focus:ring-primary-600 h-4 w-4 rounded border-slate-300 shadow-sm;
   }
   .btn {
-    @apply inline-flex h-9 select-none items-center justify-center whitespace-nowrap border px-3 font-medium shadow-sm;
+    @apply inline-flex h-9 select-none items-center justify-center whitespace-nowrap border px-2.5 font-medium;
   }
   a.btn {
     @apply cursor-pointer hover:no-underline;
   }
 
   .btn-default {
-    @apply btn bg-white text-slate-800 hover:bg-gray-50 active:bg-gray-100;
+    @apply btn;
+    @apply border-transparent text-slate-800;
+    @apply hover:bg-gray-300/50;
+    @apply active:bg-gray-300;
   }
 
-  a.btn-default {
-    @apply hover:text-primary-600;
-  }
   .btn-danger {
     @apply btn border-rose-600 bg-rose-500 text-white hover:bg-rose-600 focus-visible:ring-rose-500;
   }
@@ -89,12 +85,11 @@
     @apply text-primary-600 inline-flex items-center underline;
   }
   .btn.btn-disabled {
-    text-shadow: none;
-    @apply pointer-events-none border-gray-200 bg-slate-500/5 text-gray-400 shadow-none;
+    @apply pointer-events-none text-gray-400;
   }
   .btn-primary {
     text-shadow: rgb(0 0 0 / 20%) 0px 1px 1px;
-    @apply btn border-primary-600 bg-primary-600 active:bg-primary-600 text-white hover:bg-opacity-90;
+    @apply btn border-primary-600 bg-primary-600 active:bg-primary-600 text-white hover:bg-opacity-90 focus-visible:ring-offset-1;
   }
 
   a.btn-primary {
@@ -126,11 +121,11 @@
   }
 
   button[disabled] {
-    @apply cursor-not-allowed;
+    @apply pointer-events-none;
   }
 
   .card {
-    @apply border-y bg-white p-4 shadow-sm md:rounded-lg md:border;
+    @apply border-y border-gray-300/75 bg-gray-100/50 ring-1 ring-inset ring-white/25 sm:rounded-md sm:border-x;
   }
 }
 
@@ -150,9 +145,18 @@
 }
 
 @layer utilities {
+  .p {
+    @apply py-2.5 px-4;
+  }
   .bg-pattern {
     background-color: #f9fafb;
     background-image: url("data:image/svg+xml,%3Csvg width='100' height='20' viewBox='0 0 100 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21.184 20c.357-.13.72-.264 1.088-.402l1.768-.661C33.64 15.347 39.647 14 50 14c10.271 0 15.362 1.222 24.629 4.928.955.383 1.869.74 2.75 1.072h6.225c-2.51-.73-5.139-1.691-8.233-2.928C65.888 13.278 60.562 12 50 12c-10.626 0-16.855 1.397-26.66 5.063l-1.767.662c-2.475.923-4.66 1.674-6.724 2.275h6.335zm0-20C13.258 2.892 8.077 4 0 4V2c5.744 0 9.951-.574 14.85-2h6.334zM77.38 0C85.239 2.966 90.502 4 100 4V2c-6.842 0-11.386-.542-16.396-2h-6.225zM0 14c8.44 0 13.718-1.21 22.272-4.402l1.768-.661C33.64 5.347 39.647 4 50 4c10.271 0 15.362 1.222 24.629 4.928C84.112 12.722 89.438 14 100 14v-2c-10.271 0-15.362-1.222-24.629-4.928C65.888 3.278 60.562 2 50 2 39.374 2 33.145 3.397 23.34 7.063l-1.767.662C13.223 10.84 8.163 12 0 12v2z' fill='%239C92AC' fill-opacity='0.06' fill-rule='evenodd'/%3E%3C/svg%3E");
+  }
+
+  .bg-graph {
+    background-position: center;
+    background-color: #f9fafb;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23e5e7eb' fill-opacity='0.59'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
 }
 

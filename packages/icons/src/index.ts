@@ -1,5 +1,3 @@
-export { default as BellIcon } from "./custom-icons/bell.svg";
-export { default as BellCrossedIcon } from "./custom-icons/bell-crossed.svg";
 export { default as DiscordIcon } from "./custom-icons/discord.svg";
 export { default as GithubIcon } from "./custom-icons/github.svg";
 export { default as IfNeedBeIcon } from "./custom-icons/if-need-be.svg";

@@ -12,7 +12,7 @@ import { PollContextProvider } from "@/components/poll-context";
 import { UserProvider, useUser } from "@/components/user-provider";
 import { withPageTranslations } from "@/utils/with-page-translations";
 
-import StandardLayout from "../../components/layouts/standard-layout";
+import StandardLayout from "../../components/layouts/v3-layout";
 import ModalProvider from "../../components/modal/modal-provider";
 import { NextPageWithLayout } from "../../types";
 

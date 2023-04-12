@@ -10,7 +10,7 @@ export const whoami = router({
     }
 
     const user = await prisma.user.findUnique({
-      select: { id: true, name: true, email: true },
+      select: { id: true, name: true, email: true, createdAt: true },
       where: { id: ctx.user.id },
     });
 

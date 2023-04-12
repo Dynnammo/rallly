@@ -19,6 +19,7 @@ export type RegisteredUserSession = {
   id: string;
   name: string;
   email: string;
+  createdAt: Date;
 };
 
 export type GuestUserSession = {

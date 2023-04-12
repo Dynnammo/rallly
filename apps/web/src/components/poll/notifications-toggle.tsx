@@ -1,5 +1,6 @@
 import { trpc } from "@rallly/backend";
-import { BellCrossedIcon, BellIcon } from "@rallly/icons";
+import { BellIcon } from "@rallly/icons";
+import clsx from "clsx";
 import { useTranslation } from "next-i18next";
 import * as React from "react";
 
@@ -65,24 +66,36 @@ const NotificationsToggle: React.FunctionComponent = () => {
         </div>
       }
     >
-      <Button
-        data-testid="notifications-toggle"
-        disabled={poll.demo}
-        icon={isWatching ? <BellIcon /> : <BellCrossedIcon />}
-        onClick={async () => {
-          if (user.isGuest) {
-            // ask to log in
-            openLoginModal();
-          } else {
-            // toggle
-            if (isWatching) {
-              await unwatch.mutateAsync({ pollId: poll.id });
+      <span className="group relative inline-block">
+        <Button
+          data-testid="notifications-toggle"
+          disabled={poll.demo}
+          icon={<BellIcon />}
+          className="relative"
+          onClick={async () => {
+            if (user.isGuest) {
+              // ask to log in
+              openLoginModal();
             } else {
-              await watch.mutateAsync({ pollId: poll.id });
+              // toggle
+              if (isWatching) {
+                await unwatch.mutateAsync({ pollId: poll.id });
+              } else {
+                await watch.mutateAsync({ pollId: poll.id });
+              }
             }
-          }
-        }}
-      />
+          }}
+        ></Button>
+        <span
+          className={clsx(
+            "pointer-events-none absolute rounded-full",
+            isWatching
+              ? "top-2 right-2 h-1.5 w-1.5  bg-green-500"
+              : "inset-0 left-1/2 top-1/2 h-6 w-0.5 origin-center -translate-y-1/2 rotate-45 bg-slate-800",
+            "outline outline-1 outline-gray-100 group-hover:outline-gray-200",
+          )}
+        />
+      </span>
     </Tooltip>
   );
 };

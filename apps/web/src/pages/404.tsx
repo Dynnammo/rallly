@@ -5,7 +5,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React from "react";
 
 import ErrorPage from "@/components/error-page";
-import { getStandardLayout } from "@/components/layouts/standard-layout";
+import { getStandardLayout } from "@/components/layouts/v3-layout";
 import { NextPageWithLayout } from "@/types";
 
 const Custom404: NextPageWithLayout = () => {

@@ -1,4 +1,5 @@
 import { trpc } from "@rallly/backend";
+import { RefreshIcon } from "@rallly/icons";
 import Link from "next/link";
 import { Trans, useTranslation } from "next-i18next";
 import React from "react";
@@ -103,15 +104,15 @@ const VerifyCode: React.FunctionComponent<{
             loading={formState.isSubmitting || formState.isSubmitSuccessful}
             htmlType="submit"
             type="primary"
-            className="h-12 w-full px-6 sm:w-auto"
+            className="w-full sm:w-auto"
           >
             {t("continue")}
           </Button>
           <Button
             onClick={handleResend}
             loading={resendStatus === "busy"}
+            icon={<RefreshIcon />}
             disabled={resendStatus === "disabled"}
-            className="h-12 w-full rounded-lg px-4 text-slate-500 transition-colors hover:bg-slate-500/10 active:bg-slate-500/20 sm:w-auto"
           >
             {t("resendVerificationCode")}
           </Button>
@@ -199,7 +200,7 @@ export const RegisterForm: React.FunctionComponent<{
         }
       })}
     >
-      <div className="mb-1 text-2xl font-bold">{t("createAnAccount")}</div>
+      <h1 className="mb-1">{t("createAnAccount")}</h1>
       <p className="mb-4 text-slate-500">
         {t("stepSummary", {
           current: 1,
@@ -361,7 +362,7 @@ export const LoginForm: React.FunctionComponent<{
         }
       })}
     >
-      <div className="mb-1 text-2xl font-bold">{t("login")}</div>
+      <h1 className="mb-1">{t("login")}</h1>
       <p className="mb-4 text-slate-500">
         {t("stepSummary", {
           current: 1,
@@ -396,13 +397,9 @@ export const LoginForm: React.FunctionComponent<{
         >
           {t("continue")}
         </Button>
-        <Link
-          href="/register"
-          className="btn-default h-12 w-full px-6"
-          onClick={(e) => {
-            onClickRegister?.(e, getValues("email"));
-          }}
-        >
+      </div>
+      <div className="mt-4 border-t pt-4 text-center text-slate-500 sm:text-base">
+        <Link className="text-link" href="/register">
           {t("notRegistered")}
         </Link>
       </div>

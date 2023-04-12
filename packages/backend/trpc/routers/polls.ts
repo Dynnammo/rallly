@@ -9,7 +9,12 @@ import { nanoid } from "../../utils/nanoid";
 import { possiblyPublicProcedure, publicProcedure, router } from "../trpc";
 import { comments } from "./polls/comments";
 import { demo } from "./polls/demo";
+import { options } from "./polls/options";
 import { participants } from "./polls/participants";
+
+const UserRole = z.union([z.literal("admin"), z.literal("participant")]);
+
+export type UserRole = z.infer<typeof UserRole>;
 
 const getPollIdFromAdminUrlId = async (urlId: string) => {
   const res = await prisma.poll.findUnique({
@@ -224,6 +229,7 @@ export const polls = router({
   demo,
   participants,
   comments,
+  options,
   // END LEGACY ROUTES
   watch: possiblyPublicProcedure
     .input(z.object({ pollId: z.string() }))
@@ -375,5 +381,104 @@ export const polls = router({
       } else {
         return { ...res, adminUrlId: "" };
       }
+    }),
+  list: possiblyPublicProcedure.query(async ({ ctx }) => {
+    return await prisma.poll.findMany({
+      where: {
+        userId: ctx.user.id,
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        participants: {
+          select: {
+            name: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+        comments: {
+          select: {
+            id: true,
+          },
+        },
+        createdAt: true,
+        closed: true,
+        adminUrlId: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }),
+  get: publicProcedure
+    .input(
+      z.object({
+        pollId: z.string(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const res = await prisma.poll.findUnique({
+        select: {
+          id: true,
+          timeZone: true,
+          title: true,
+          location: true,
+          description: true,
+          createdAt: true,
+          participantUrlId: true,
+          adminUrlId: true,
+          closed: true,
+          user: true,
+          userId: true,
+          deleted: true,
+        },
+        where: {
+          id: input.pollId,
+        },
+      });
+
+      if (!res) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Poll not found",
+        });
+      }
+
+      if (res.userId !== ctx.user.id) {
+        // hide admin url id if not the owner
+        return { ...res, adminUrlId: null };
+      }
+
+      return res;
+    }),
+  exchangeId: publicProcedure
+    .input(
+      z.object({
+        urlId: z.string(),
+        role: z.enum(["admin", "participant"]),
+      }),
+    )
+    .query(async ({ input }) => {
+      const poll = await prisma.poll.findUnique({
+        select: {
+          id: true,
+        },
+        where:
+          input.role === "admin"
+            ? { adminUrlId: input.urlId }
+            : { participantUrlId: input.urlId },
+      });
+
+      if (!poll) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Poll not found",
+        });
+      }
+
+      return poll.id;
     }),
 });

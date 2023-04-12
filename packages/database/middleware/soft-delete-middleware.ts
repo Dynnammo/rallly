@@ -23,7 +23,7 @@ export const softDeleteMiddleware = (
           params.args["data"] = { deleted: true, deletedAt: new Date() };
         }
       }
-      if (params.action === "findFirst") {
+      if (params.action === "findFirst" || params.action === "findMany") {
         // Add 'deleted' filter
         // ID filter maintained
         params.args.where["deleted"] = params.args.where["deleted"] || false;
