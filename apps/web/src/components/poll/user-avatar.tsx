@@ -79,11 +79,6 @@ export const getRandomAvatarColor = (str: string) => {
   return avatarBackgroundColors[randomIndex];
 };
 
-export const useAvatarColor = (name: string) => {
-  const context = React.useContext(AvatarColorContext);
-  return getRandomAvatarColor(context?.seed + name);
-};
-
 function requiresWhiteOrDarkText(color: RGBColor) {
   const [r, g, b] = color;
   const L = (0.2126 * r) / 255 + (0.7152 * g) / 255 + (0.0722 * b) / 255;
@@ -91,7 +86,7 @@ function requiresWhiteOrDarkText(color: RGBColor) {
 }
 
 export const ColoredAvatar = (props: { name: string; className?: string }) => {
-  const color = useAvatarColor(props.name);
+  const color = getRandomAvatarColor(props.name);
   const rgbColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
   return (
     <Avatar

@@ -2,10 +2,12 @@ import { withAuthIfRequired, withSessionSsr } from "@rallly/backend/next";
 import { Participant, Vote } from "@rallly/database";
 import {
   CalendarIcon,
+  ClipboardCopyIcon,
   ClockIcon,
   EyeIcon,
   QuestionMarkCircleIcon,
   StarIcon,
+  UserIcon,
   UsersIcon,
 } from "@rallly/icons";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -25,6 +27,7 @@ import UserAvatar from "@/components/poll/user-avatar";
 import VoteIcon from "@/components/poll/vote-icon";
 import { Table } from "@/components/table";
 import { Trans } from "@/components/trans";
+import { ParticipantAvatarBar } from "@/components/ui/participant-avatar-bar";
 import {
   useCreatePollLink,
   useCurrentEvent,
@@ -82,24 +85,25 @@ export const CopyLink = () => {
 
 const VoteSummary = (props: {
   total: number;
-  yes: number;
-  ifNeedBe: number;
-  no: number;
+  yes: string[];
+  ifNeedBe: string[];
+  no: string[];
 }) => {
-  const pending = props.total - props.yes - props.ifNeedBe - props.no;
+  const pending =
+    props.total - props.yes.length - props.ifNeedBe.length - props.no.length;
   return (
     <span className="inline-flex gap-3 text-sm font-semibold tabular-nums">
       <span className="flex items-center gap-1.5">
-        <VoteIcon type="yes" />
+        <UserIcon className="h-5" />
         <span>
-          {props.yes}
+          {props.yes.length + props.ifNeedBe.length}
           <span className="text-gray-400">{`/${props.total}`}</span>
         </span>
       </span>
-      {props.ifNeedBe ? (
+      {props.ifNeedBe.length ? (
         <span className="flex items-center gap-1.5">
           <VoteIcon type="ifNeedBe" />
-          {props.ifNeedBe}
+          {props.ifNeedBe.length}
         </span>
       ) : null}
       {pending ? (
@@ -244,7 +248,7 @@ const Section = ({
       </div>
     </div>
     <div>{children}</div>
-    <div className="border-t bg-gray-50 p-3">{actions}</div>
+    {actions ? <div className="border-t bg-gray-50 p-3">{actions}</div> : null}
   </section>
 );
 
@@ -356,28 +360,28 @@ const RecentlyVoted = () => {
 
 const VoteSummaryProgressBar = (props: {
   total: number;
-  yes: number;
-  ifNeedBe: number;
-  no: number;
+  yes: string[];
+  ifNeedBe: string[];
+  no: string[];
 }) => {
   return (
-    <div className="flex h-2 overflow-hidden rounded bg-slate-300">
+    <div className="flex h-2 overflow-hidden rounded  bg-slate-100">
       <div
-        className="h-full bg-green-400"
+        className="h-full bg-green-500"
         style={{
-          width: (props.yes / props.total) * 100 + "%",
+          width: (props.yes.length / props.total) * 100 + "%",
         }}
       />
       <div
-        className="h-full bg-amber-300"
+        className="h-full bg-amber-400"
         style={{
-          width: (props.ifNeedBe / props.total) * 100 + "%",
+          width: (props.ifNeedBe.length / props.total) * 100 + "%",
         }}
       />
       <div
-        className="h-full "
+        className="h-full bg-slate-300"
         style={{
-          width: (props.no / props.total) * 100 + "%",
+          width: (props.no.length / props.total) * 100 + "%",
         }}
       />
     </div>
@@ -394,26 +398,26 @@ const MostPopular = () => {
     const res: Record<
       string,
       {
-        yes: number;
-        ifNeedBe: number;
-        no: number;
+        yes: string[];
+        ifNeedBe: string[];
+        no: string[];
       }
     > = {};
 
     for (const vote of votes) {
       if (!res[vote.optionId]) {
-        res[vote.optionId] = { yes: 0, ifNeedBe: 0, no: 0 };
+        res[vote.optionId] = { yes: [], ifNeedBe: [], no: [] };
       }
 
       switch (vote.type) {
         case "yes":
-          res[vote.optionId].yes += 1;
+          res[vote.optionId].yes.push(vote.participantId);
           break;
         case "ifNeedBe":
-          res[vote.optionId].ifNeedBe += 1;
+          res[vote.optionId].ifNeedBe.push(vote.participantId);
           break;
         case "no":
-          res[vote.optionId].no += 1;
+          res[vote.optionId].no.push(vote.participantId);
           break;
       }
     }
@@ -424,7 +428,9 @@ const MostPopular = () => {
     // Get top 3 options
 
     return Object.keys(scoreByOptionId)
-      .sort((a, b) => scoreByOptionId[b].yes - scoreByOptionId[a].yes)
+      .sort(
+        (a, b) => scoreByOptionId[b].yes.length - scoreByOptionId[a].yes.length,
+      )
       .slice(0, 3)
       .flatMap((optionId) => {
         const option = options.find((o) => o.id === optionId);
@@ -462,32 +468,74 @@ const MostPopular = () => {
         <div className="divide-y md:flex md:divide-y-0 md:divide-x">
           {bestOptions.map((option, i) => {
             return (
-              <div key={option.id} className="grow basis-0">
-                <div className="flex items-center gap-4 p-3">
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="relative min-w-[60px] rounded border py-1.5 px-2.5 text-center">
-                      <span className="absolute -right-2.5 -top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-gray-200 text-xs font-bold shadow-sm">
-                        {i + 1}
-                      </span>
-                      <div className="text-xs leading-tight text-gray-400">
-                        {dayjs(option.start).format("dd")}
+              <div key={option.id} className="grow basis-1/3">
+                <div className="flex items-start gap-4 border-b bg-white p-4">
+                  <div className="w-16 overflow-hidden rounded-md border border-slate-200 bg-white text-center text-slate-800">
+                    <div className="border-b  border-slate-200 bg-slate-50 pt-0.5 text-xs leading-4">
+                      {dayjs(option.start).format("ddd")}
+                    </div>
+                    <div className="py-1">
+                      <div className="text-lg font-bold ">
+                        {dayjs(option.start).format("D")}
                       </div>
-                      <div className="text-lg font-bold leading-tight">
-                        {dayjs(option.start).format("DD")}
-                      </div>
-                      <div className="text-xs font-semibold uppercase leading-tight">
+                      <div className="text-xs font-bold uppercase">
                         {dayjs(option.start).format("MMM")}
                       </div>
                     </div>
-                    <VoteSummary
-                      {...scoreByOptionId[option.id]}
-                      total={responses?.length || 0}
-                    />
                   </div>
+                  <div>
+                    <ul>
+                      <li>
+                        <Trans
+                          i18nKey="poll.optionDuration"
+                          values={{
+                            duration:
+                              option.duration === 0
+                                ? "All Day"
+                                : option.duration,
+                          }}
+                          components={{ b: <strong /> }}
+                          defaults="<b>Duration:</b> {duration}"
+                        />
+                      </li>
+                      {option.duration ? (
+                        <li>
+                          <Trans
+                            i18nKey="poll.startTime"
+                            values={{
+                              startTime: dayjs(option.start).format("LT"),
+                            }}
+                            components={{ b: <strong /> }}
+                            defaults="<b>Start:</b> {startTime}"
+                          />
+                        </li>
+                      ) : null}
+                      <li>
+                        <div className="grid gap-3 py-2">
+                          <ParticipantAvatarBar
+                            participants={responses.filter((response) => {
+                              return scoreByOptionId[option.id].yes.includes(
+                                response.id,
+                              );
+                            })}
+                            max={5}
+                          />
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 p-3">
                   <div className="grow">
                     <VoteSummaryProgressBar
                       total={responses?.length || 0}
                       {...option.score}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between gap-4">
+                    <VoteSummary
+                      {...scoreByOptionId[option.id]}
+                      total={responses?.length || 0}
                     />
                   </div>
                   <div>
@@ -505,9 +553,26 @@ const MostPopular = () => {
   );
 };
 
+const ParticipantLink = () => {
+  const { data: event } = useCurrentEvent();
+  return (
+    <div className="-mx-5 -mt-5 flex items-center justify-end gap-1 border-b bg-white py-3 px-5">
+      <input
+        readOnly={true}
+        className="h-9 w-72 rounded border bg-gray-50 px-2.5"
+        value={`${window.location.origin}/p/${event?.participantUrlId}`}
+      />
+      <div>
+        <Button icon={<ClipboardCopyIcon />} />
+      </div>
+    </div>
+  );
+};
+
 const Page: NextPageWithLayout = () => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
+      <ParticipantLink />
       <MostPopular />
       <RecentlyVoted />
     </div>
