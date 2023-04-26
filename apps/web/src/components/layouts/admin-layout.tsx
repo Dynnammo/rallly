@@ -12,7 +12,6 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import React from "react";
 
-import SubMenuLayout from "@/components/layouts/components/sub-menu-layout";
 import StandardLayout from "@/components/layouts/v3-layout";
 import { Trans } from "@/components/trans";
 import { PollIdProvider, useCurrentEvent } from "@/contexts/current-event";
@@ -64,9 +63,9 @@ const AdminLayoutInner: React.FunctionComponent<{
       <Head>
         <title>{data?.title}</title>
       </Head>
-      <div className="rounded-md border bg-white p-5 shadow-sm">
-        <div>
-          <div className="sticky top-0 z-10">
+      <div className="rounded-md border bg-white shadow-sm">
+        <div className="sticky top-0 z-10 rounded-t-md border-b bg-white py-4 px-5">
+          <div className="">
             <h1 className="text-xl tracking-tight md:text-2xl">
               {data?.title}
             </h1>
@@ -117,7 +116,7 @@ const AdminLayoutInner: React.FunctionComponent<{
             ))}
           </div>
         </div>
-        <div className="mt-4">{children}</div>
+        <div className="px-5 py-4">{children}</div>
       </div>
     </>
   );

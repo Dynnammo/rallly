@@ -1,6 +1,6 @@
 import { withAuthIfRequired, withSessionSsr } from "@rallly/backend/next";
 import { Participant, Vote } from "@rallly/database";
-import { CalendarIcon, DotsHorizontalIcon } from "@rallly/icons";
+import { CalendarIcon, ClockIcon, QuestionMarkCircleIcon } from "@rallly/icons";
 import { createColumnHelper } from "@tanstack/react-table";
 import clsx from "clsx";
 import dayjs from "dayjs";
@@ -11,8 +11,6 @@ import React from "react";
 import toast from "react-hot-toast";
 import { useCopyToClipboard } from "react-use";
 
-import { Button } from "@/components/button";
-import { DragScroll } from "@/components/drag-scroll";
 import { getAdminLayout } from "@/components/layouts/admin-layout";
 import { ScoreSummary } from "@/components/poll/score-summary";
 import UserAvatar from "@/components/poll/user-avatar";
@@ -74,40 +72,31 @@ export const CopyLink = () => {
   );
 };
 
-const columnHelper = createColumnHelper<Participant & { votes: Vote[] }>();
-
-const VoteSummary = (props: { votes: Vote[] }) => {
-  const yes: string[] = [];
-  const ifNeedBe: string[] = [];
-  const no: string[] = [];
-
-  for (const vote of props.votes) {
-    switch (vote.type) {
-      case "yes":
-        yes.push(vote.optionId);
-        break;
-      case "ifNeedBe":
-        ifNeedBe.push(vote.optionId);
-        break;
-      case "no":
-        no.push(vote.optionId);
-        break;
-    }
-  }
+const VoteSummary = (props: {
+  total: number;
+  yes: number;
+  ifNeedBe: number;
+  no: number;
+}) => {
+  const pending = props.total - props.yes - props.ifNeedBe - props.no;
   return (
     <span className="inline-flex gap-3 text-sm font-semibold tabular-nums">
       <span className="flex items-center gap-1.5">
         <VoteIcon type="yes" />
-        {yes.length}
+        {props.yes}
       </span>
-      <span className="flex items-center gap-1.5">
-        <VoteIcon type="ifNeedBe" />
-        {ifNeedBe.length}
-      </span>
-      <span className="flex items-center gap-1.5">
-        <VoteIcon type="no" />
-        {no.length}
-      </span>
+      {props.ifNeedBe ? (
+        <span className="flex items-center gap-1.5">
+          <VoteIcon type="ifNeedBe" />
+          {props.ifNeedBe}
+        </span>
+      ) : null}
+      {pending ? (
+        <span className="flex items-center gap-1.5">
+          <QuestionMarkCircleIcon className="h-4" />
+          {pending}
+        </span>
+      ) : null}
     </span>
   );
 };
@@ -130,68 +119,68 @@ const Heading = (props: { id: string; start: Date; duration: number }) => {
   );
 };
 
-const Responses = () => {
-  const { data: responses = [] } = useCurrentPollResponses();
-  const { data: options = [] } = useCurrentPollOptions();
+// const Responses = () => {
+//   const { data: responses = [] } = useCurrentPollResponses();
+//   const { data: options = [] } = useCurrentPollOptions();
 
-  const { t } = useTranslation();
-  return (
-    <DragScroll className="card relative bg-white">
-      <Table
-        layout="fixed"
-        data={responses}
-        columns={[
-          columnHelper.accessor("name", {
-            header: "Name",
-            size: 300,
-            cell: (info) => (
-              <div className="whitespace-nowrap">
-                <div className="flex gap-4">
-                  <UserAvatar name={info.getValue()} />
-                  <div className="">
-                    <div className="font-semibold">{info.getValue()}</div>
-                    <div className="text-gray-500">
-                      {dayjs(info.row.original.createdAt).format("L")}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ),
-          }),
-          ...options.map((option) => {
-            return columnHelper.accessor("votes", {
-              header: () => <Heading {...option} />,
-              size: 80,
-              cell: (info) => (
-                <VoteIcon
-                  className="mx-auto"
-                  type={
-                    info.getValue().find((vote) => vote.optionId === option.id)
-                      ?.type
-                  }
-                />
-              ),
-            });
-          }),
-          // columnHelper.accessor("votes", {
-          //   header: "Votes",
-          //   size: 100,
-          //   cell: (info) => <VoteSummary votes={info.getValue()} />,
-          // }),
-          columnHelper.accessor("createdAt", {
-            header: () => null,
-            maxSize: 100,
-            cell: () => (
-              <div className="sticky right-0 z-50">
-                <Button icon={<DotsHorizontalIcon />} />
-              </div>
-            ),
-          }),
-        ]}
-      />
-    </DragScroll>
-  );
-};
+//   const { t } = useTranslation();
+//   return (
+//     <DragScroll className="card relative bg-white">
+//       <Table
+//         layout="fixed"
+//         data={responses}
+//         columns={[
+//           columnHelper.accessor("name", {
+//             header: "Name",
+//             size: 300,
+//             cell: (info) => (
+//               <div className="whitespace-nowrap">
+//                 <div className="flex gap-4">
+//                   <UserAvatar name={info.getValue()} />
+//                   <div className="">
+//                     <div className="font-semibold">{info.getValue()}</div>
+//                     <div className="text-gray-500">
+//                       {dayjs(info.row.original.createdAt).format("L")}
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             ),
+//           }),
+//           ...options.map((option) => {
+//             return columnHelper.accessor("votes", {
+//               header: () => <Heading {...option} />,
+//               size: 80,
+//               cell: (info) => (
+//                 <VoteIcon
+//                   className="mx-auto"
+//                   type={
+//                     info.getValue().find((vote) => vote.optionId === option.id)
+//                       ?.type
+//                   }
+//                 />
+//               ),
+//             });
+//           }),
+//           // columnHelper.accessor("votes", {
+//           //   header: "Votes",
+//           //   size: 100,
+//           //   cell: (info) => <VoteSummary votes={info.getValue()} />,
+//           // }),
+//           columnHelper.accessor("createdAt", {
+//             header: () => null,
+//             maxSize: 100,
+//             cell: () => (
+//               <div className="sticky right-0 z-50">
+//                 <Button icon={<DotsHorizontalIcon />} />
+//               </div>
+//             ),
+//           }),
+//         ]}
+//       />
+//     </DragScroll>
+//   );
+// };
 
 // const Page: NextPageWithLayout = () => {
 //   const { data: responses } = useCurrentPollResponses();
@@ -228,6 +217,169 @@ const Page: NextPageWithLayout = () => {
   return (
     <div className="space-y-8">
       <MostPopular />
+      <RecentlyVoted />
+    </div>
+  );
+};
+
+const Section = (props: React.PropsWithChildren) => (
+  <div className="space-y-4">{props.children}</div>
+);
+
+const Card = (
+  props: React.PropsWithChildren<{
+    className?: string;
+    footer?: React.ReactNode;
+  }>,
+) => {
+  return (
+    <div className={clsx("overflow-hidden rounded border", props.className)}>
+      {props.children}
+      <div className="border-t bg-white/50 p-2.5 backdrop-blur-sm">
+        {props.footer}
+      </div>
+    </div>
+  );
+};
+
+const ButtonLink = (
+  props: React.PropsWithChildren<{
+    href: string;
+    icon?: React.ComponentType<{ className?: string }>;
+    className?: string;
+  }>,
+) => {
+  return (
+    <Link {...props} className={clsx("btn-default gap-2", props.className)}>
+      {props.icon ? <props.icon className="h-5" /> : null}
+      <span>{props.children}</span>
+    </Link>
+  );
+};
+
+const participantColumnHelper = createColumnHelper<
+  Participant & { votes: Vote[] }
+>();
+
+const RecentlyVoted = () => {
+  const { data: responses } = useCurrentPollResponses();
+  const { data: options } = useCurrentPollOptions();
+  const createPollLink = useCreatePollLink();
+  return (
+    <Section>
+      <SectionHeader
+        title={<Trans i18nKey="poll.recentlyVoted" defaults="Recently Voted" />}
+        subtitle={
+          <Trans
+            i18nKey="poll.recentlyVotedSubtitle"
+            defaults="These participants have voted."
+          />
+        }
+      />
+      <Card
+        footer={
+          <ButtonLink href={createPollLink("/participants")}>
+            <Trans
+              i18nKey="poll.viewAllParticipants"
+              defaults="View All Participants"
+            />
+          </ButtonLink>
+        }
+      >
+        <Table
+          layout="auto"
+          data={responses?.slice(0, 3) ?? []}
+          columns={[
+            participantColumnHelper.accessor("name", {
+              header: () => (
+                <Trans
+                  i18nKey="poll.participantName"
+                  defaults="Participant Name"
+                />
+              ),
+              cell: (info) => {
+                return (
+                  <div>
+                    <UserAvatar name={info.getValue()} showName={true} />
+                  </div>
+                );
+              },
+            }),
+            participantColumnHelper.accessor("votes", {
+              header: () => <Trans i18nKey="poll.votes" defaults="Votes" />,
+              cell: (info) => {
+                return (
+                  <div className="flex gap-2">
+                    {options?.slice(0, 8).map((option) => {
+                      const vote = info
+                        .getValue()
+                        .find((v) => v.optionId === option.id);
+
+                      return <VoteIcon type={vote?.type} key={option.id} />;
+                    })}
+                  </div>
+                );
+              },
+            }),
+            participantColumnHelper.accessor("createdAt", {
+              header: () => (
+                <Trans i18nKey="poll.votedOnDate" defaults="Date" />
+              ),
+              cell: (info) => {
+                return (
+                  <span className="flex items-center gap-2 text-sm">
+                    <ClockIcon className="h-4" />
+                    {dayjs(info.getValue()).format("LL LT")}
+                  </span>
+                );
+              },
+            }),
+          ]}
+        />
+      </Card>
+    </Section>
+  );
+};
+
+const VoteSummaryProgressBar = (props: {
+  total: number;
+  yes: number;
+  ifNeedBe: number;
+  no: number;
+}) => {
+  return (
+    <div className="flex h-2 overflow-hidden rounded bg-slate-300">
+      <div
+        className="h-full bg-green-400"
+        style={{
+          width: (props.yes / props.total) * 100 + "%",
+        }}
+      />
+      <div
+        className="h-full bg-amber-300"
+        style={{
+          width: (props.ifNeedBe / props.total) * 100 + "%",
+        }}
+      />
+      <div
+        className="h-full "
+        style={{
+          width: (props.no / props.total) * 100 + "%",
+        }}
+      />
+    </div>
+  );
+};
+
+const SectionHeader = (props: {
+  className?: string;
+  title: React.ReactNode;
+  subtitle?: React.ReactNode;
+}) => {
+  return (
+    <div className="grid-4 grid">
+      <h2 className="text-lg tracking-tight">{props.title}</h2>
+      <p className="text-gray-500">{props.subtitle}</p>
     </div>
   );
 };
@@ -236,12 +388,10 @@ const MostPopular = () => {
   const createPollLink = useCreatePollLink();
   const { data: responses } = useCurrentPollResponses();
   const { data: options = [] } = useCurrentPollOptions();
-  const bestOptions = React.useMemo(() => {
-    if (!responses) return [];
-
+  const scoreByOptionId = React.useMemo(() => {
     const votes = responses.flatMap((response) => response.votes);
 
-    const scoreByOptionId: Record<
+    const res: Record<
       string,
       {
         yes: number;
@@ -251,23 +401,26 @@ const MostPopular = () => {
     > = {};
 
     for (const vote of votes) {
-      if (!scoreByOptionId[vote.optionId]) {
-        scoreByOptionId[vote.optionId] = { yes: 0, ifNeedBe: 0, no: 0 };
+      if (!res[vote.optionId]) {
+        res[vote.optionId] = { yes: 0, ifNeedBe: 0, no: 0 };
       }
 
       switch (vote.type) {
         case "yes":
-          scoreByOptionId[vote.optionId].yes += 1;
+          res[vote.optionId].yes += 1;
           break;
         case "ifNeedBe":
-          scoreByOptionId[vote.optionId].ifNeedBe += 1;
+          res[vote.optionId].ifNeedBe += 1;
           break;
         case "no":
-          scoreByOptionId[vote.optionId].no += 1;
+          res[vote.optionId].no += 1;
           break;
       }
     }
+    return res;
+  }, [responses]);
 
+  const bestOptions = React.useMemo(() => {
     // Get top 3 options
 
     return Object.keys(scoreByOptionId)
@@ -284,74 +437,68 @@ const MostPopular = () => {
 
         return [];
       });
-  }, [responses, options]);
+  }, [scoreByOptionId, options]);
 
   return (
-    <div>
-      <div className="grid gap-4">
-        <div>
-          <h2 className="text-lg tracking-tight">
-            <Trans i18nKey="poll.mostPopular" defaults="Most Popular" />
-          </h2>
-          <p className="text-gray-500">
-            <Trans
-              i18nKey="poll.bestOptionsDescription"
-              defaults="These are the most popular dates with your participants"
-            />
-          </p>
-        </div>
-        <div className="divide-y rounded border">
-          <div className="bg-graph col-span-2 grid grid-cols-1 lg:grid-cols-3">
-            {bestOptions.map((option) => {
-              return (
-                <div key={option.id} className="">
-                  <div className="space-y-4 p-4">
+    <Section>
+      <SectionHeader
+        title={<Trans i18nKey="poll.mostPopular" defaults="Most Popular" />}
+        subtitle={
+          <Trans
+            i18nKey="poll.bestOptionsDescription"
+            defaults="These are the most popular dates with your participants."
+          />
+        }
+      />
+
+      <Card
+        footer={
+          <div className="text-right">
+            <ButtonLink href={createPollLink("/options")} icon={CalendarIcon}>
+              <Trans i18nKey="poll.viewAllDates" defaults="View All Dates" />
+            </ButtonLink>
+          </div>
+        }
+      >
+        <div className="col-span-2 grid grid-cols-1 divide-x lg:grid-cols-3">
+          {bestOptions.map((option, i) => {
+            return (
+              <div key={option.id} className="">
+                <div className="space-y-4 p-4">
+                  <div>
+                    <span className="text-lg font-bold">{i + 1}.</span>
+                  </div>
+                  <div className="flex justify-between">
                     <div className="font-bold">
                       {dayjs(option.start).format("LL")}
                     </div>
-                    <div>
-                      <div className="flex h-2 overflow-hidden rounded-sm bg-gray-300">
-                        <div
-                          className="h-full bg-green-500"
-                          style={{
-                            width:
-                              (option.score.yes / options.length) * 100 + "%",
-                          }}
-                        />
-                        <div
-                          className="h-full bg-amber-400"
-                          style={{
-                            width:
-                              (option.score.ifNeedBe / options.length) * 100 +
-                              "%",
-                          }}
-                        />
-                        <div
-                          className="h-full "
-                          style={{
-                            width:
-                              (option.score.no / options.length) * 100 + "%",
-                          }}
-                        />
-                      </div>
-                    </div>
+                    <VoteSummary
+                      {...scoreByOptionId[option.id]}
+                      total={responses?.length || 0}
+                    />
+                  </div>
+                  <div>
+                    <VoteSummaryProgressBar
+                      total={responses?.length || 0}
+                      {...option.score}
+                    />
+                  </div>
+                  <div>
+                    <ButtonLink
+                      href={createPollLink("/options")}
+                      className="w-full"
+                      icon={CalendarIcon}
+                    >
+                      <Trans i18nKey="poll.book" defaults="Book" />
+                    </ButtonLink>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-          <div className="flex p-2.5">
-            <Link
-              className="btn-default gap-2"
-              href={createPollLink("/options")}
-            >
-              <CalendarIcon className="h-5" />
-              <Trans i18nKey="poll.viewResults" defaults="View All Dates" />
-            </Link>
-          </div>
+              </div>
+            );
+          })}
         </div>
-      </div>
-    </div>
+      </Card>
+    </Section>
   );
 };
 
