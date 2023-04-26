@@ -27,6 +27,6 @@ const Page: NextPageWithLayout = () => {
 
 Page.getLayout = getAuthLayout;
 
-export const getServerSideProps = withPageTranslations(["common", "app"]);
+export const getServerSideProps = withPageTranslations();
 
 export default Page;

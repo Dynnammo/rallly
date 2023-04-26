@@ -157,7 +157,7 @@ Page.getLayout = getStandardLayout;
 export default Page;
 
 export const getServerSideProps: GetServerSideProps = withSessionSsr(
-  [withAuthIfRequired, withPageTranslations(["common", "app"])],
+  [withAuthIfRequired, withPageTranslations()],
   {
     onPrefetch: async (ssg) => {
       await ssg.polls.list.prefetch();

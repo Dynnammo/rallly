@@ -76,7 +76,7 @@ Page.getLayout = getProfileLayout;
 
 export const getServerSideProps = withSessionSsr([
   withAuthIfRequired,
-  withPageTranslations(["common", "app"]),
+  withPageTranslations(),
 ]);
 
 export default Page;

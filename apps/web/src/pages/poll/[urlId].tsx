@@ -1,5 +1,4 @@
 import { withAuthIfRequired, withSessionSsr } from "@rallly/backend/next";
-import { options } from "@rallly/backend/trpc/routers/polls/options";
 import { Participant, Vote } from "@rallly/database";
 import { DotsHorizontalIcon, InboxIcon } from "@rallly/icons";
 import { preventWidows } from "@rallly/utils";
@@ -15,12 +14,10 @@ import { useCopyToClipboard } from "react-use";
 import { Button } from "@/components/button";
 import { DragScroll } from "@/components/drag-scroll";
 import { getAdminLayout } from "@/components/layouts/admin-layout";
-import { OptionList } from "@/components/option-list";
 import { ScoreSummary } from "@/components/poll/score-summary";
 import UserAvatar from "@/components/poll/user-avatar";
 import VoteIcon from "@/components/poll/vote-icon";
 import { Table } from "@/components/table";
-import { TableView } from "@/components/table-view";
 import {
   useCurrentEvent,
   useCurrentPollOptions,
@@ -232,7 +229,7 @@ Page.getLayout = getAdminLayout;
 export const getServerSideProps: GetServerSideProps = withSessionSsr(
   [
     withAuthIfRequired,
-    withPageTranslations(["common", "app", "errors"]),
+    withPageTranslations(),
     async (ctx) => {
       return {
         props: {
