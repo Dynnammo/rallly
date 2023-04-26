@@ -14,7 +14,11 @@ import React from "react";
 
 import StandardLayout from "@/components/layouts/v3-layout";
 import { Trans } from "@/components/trans";
-import { PollIdProvider, useCurrentEvent } from "@/contexts/current-event";
+import {
+  PollIdProvider,
+  useCreatePollLink,
+  useCurrentEvent,
+} from "@/contexts/current-event";
 
 import { NextPageWithLayout } from "../../types";
 
@@ -58,6 +62,8 @@ const AdminLayoutInner: React.FunctionComponent<{
 
   const { data } = useCurrentEvent();
 
+  const createPollLink = useCreatePollLink();
+
   return (
     <>
       <Head>
@@ -80,29 +86,30 @@ const AdminLayoutInner: React.FunctionComponent<{
           <div className={clsx("-mx-3 mt-4 flex gap-2")}>
             {[
               {
-                href: `/poll/${data?.id}`,
+                href: createPollLink(),
                 title: <Trans i18nKey="poll.dashboard" defaults="Dashboard" />,
                 icon: ChartSquareBarIcon,
               },
+
               {
-                href: `/poll/${data?.id}/participants`,
+                href: createPollLink("/dates"),
+                title: <Trans i18nKey="poll.dates" defaults="Dates" />,
+                icon: CalendarIcon,
+              },
+              {
+                href: createPollLink("/settings"),
+                title: <Trans i18nKey="poll.settings" defaults="Settings" />,
+                icon: CogIcon,
+              },
+              {
+                href: createPollLink("/participants"),
                 title: (
                   <Trans i18nKey="poll.participants" defaults="Participants" />
                 ),
                 icon: UsersIcon,
               },
               {
-                href: `/poll/${data?.id}/options`,
-                title: <Trans i18nKey="poll.dates" defaults="Dates" />,
-                icon: CalendarIcon,
-              },
-              {
-                href: `/poll/${data?.id}/manage`,
-                title: <Trans i18nKey="poll.settings" defaults="Settings" />,
-                icon: CogIcon,
-              },
-              {
-                href: `/poll/${data?.id}/options`,
+                href: createPollLink("/comments"),
                 title: <Trans i18nKey="poll.comments" defaults="Comments" />,
                 icon: ChatIcon,
               },
@@ -116,7 +123,7 @@ const AdminLayoutInner: React.FunctionComponent<{
             ))}
           </div>
         </div>
-        <div className="px-5 py-4">{children}</div>
+        <div className="bg-gray-50 px-5 py-4">{children}</div>
       </div>
     </>
   );

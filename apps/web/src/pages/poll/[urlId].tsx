@@ -1,6 +1,12 @@
 import { withAuthIfRequired, withSessionSsr } from "@rallly/backend/next";
 import { Participant, Vote } from "@rallly/database";
-import { CalendarIcon, ClockIcon, QuestionMarkCircleIcon } from "@rallly/icons";
+import {
+  CalendarIcon,
+  ClockIcon,
+  EyeIcon,
+  QuestionMarkCircleIcon,
+  UsersIcon,
+} from "@rallly/icons";
 import { createColumnHelper } from "@tanstack/react-table";
 import clsx from "clsx";
 import dayjs from "dayjs";
@@ -233,11 +239,14 @@ const Card = (
   }>,
 ) => {
   return (
-    <div className={clsx("overflow-hidden rounded border", props.className)}>
+    <div
+      className={clsx(
+        "overflow-hidden rounded border bg-white",
+        props.className,
+      )}
+    >
       {props.children}
-      <div className="border-t bg-white/50 p-2.5 backdrop-blur-sm">
-        {props.footer}
-      </div>
+      <div className="border-t p-3">{props.footer}</div>
     </div>
   );
 };
@@ -278,7 +287,7 @@ const RecentlyVoted = () => {
       />
       <Card
         footer={
-          <ButtonLink href={createPollLink("/participants")}>
+          <ButtonLink href={createPollLink("/participants")} icon={UsersIcon}>
             <Trans
               i18nKey="poll.viewAllParticipants"
               defaults="View All Participants"
@@ -288,7 +297,7 @@ const RecentlyVoted = () => {
       >
         <Table
           layout="auto"
-          data={responses?.slice(0, 3) ?? []}
+          data={responses?.slice(0, 5) ?? []}
           columns={[
             participantColumnHelper.accessor("name", {
               header: () => (
@@ -309,7 +318,7 @@ const RecentlyVoted = () => {
               header: () => <Trans i18nKey="poll.votes" defaults="Votes" />,
               cell: (info) => {
                 return (
-                  <div className="flex gap-2">
+                  <div className="flex h-7 items-center gap-2">
                     {options?.slice(0, 8).map((option) => {
                       const vote = info
                         .getValue()
@@ -327,9 +336,8 @@ const RecentlyVoted = () => {
               ),
               cell: (info) => {
                 return (
-                  <span className="flex items-center gap-2 text-sm">
-                    <ClockIcon className="h-4" />
-                    {dayjs(info.getValue()).format("LL LT")}
+                  <span className="flex items-center gap-2 text-sm text-gray-500">
+                    {dayjs(info.getValue()).fromNow()}
                   </span>
                 );
               },
@@ -386,7 +394,7 @@ const SectionHeader = (props: {
 
 const MostPopular = () => {
   const createPollLink = useCreatePollLink();
-  const { data: responses } = useCurrentPollResponses();
+  const { data: responses = [] } = useCurrentPollResponses();
   const { data: options = [] } = useCurrentPollOptions();
   const scoreByOptionId = React.useMemo(() => {
     const votes = responses.flatMap((response) => response.votes);
@@ -453,24 +461,30 @@ const MostPopular = () => {
 
       <Card
         footer={
-          <div className="text-right">
-            <ButtonLink href={createPollLink("/options")} icon={CalendarIcon}>
-              <Trans i18nKey="poll.viewAllDates" defaults="View All Dates" />
-            </ButtonLink>
-          </div>
+          <ButtonLink href={createPollLink("/options")} icon={CalendarIcon}>
+            <Trans i18nKey="poll.viewAllDates" defaults="View All Dates" />
+          </ButtonLink>
         }
       >
-        <div className="col-span-2 grid grid-cols-1 divide-x lg:grid-cols-3">
+        <div className="col-span-2 flex divide-x">
           {bestOptions.map((option, i) => {
             return (
-              <div key={option.id} className="">
+              <div key={option.id} className="grow basis-0">
                 <div className="space-y-4 p-4">
-                  <div>
-                    <span className="text-lg font-bold">{i + 1}.</span>
-                  </div>
                   <div className="flex justify-between">
-                    <div className="font-bold">
-                      {dayjs(option.start).format("LL")}
+                    <div className="relative min-w-[60px] rounded border py-1.5 px-2.5 text-center">
+                      <span className="absolute -right-2.5 -top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-gray-200 text-xs font-bold shadow-sm">
+                        {i + 1}
+                      </span>
+                      <div className="text-xs leading-tight text-gray-400">
+                        {dayjs(option.start).format("dd")}
+                      </div>
+                      <div className="text-xl font-bold leading-tight">
+                        {dayjs(option.start).format("D")}
+                      </div>
+                      <div className="text-xs font-semibold uppercase leading-tight">
+                        {dayjs(option.start).format("MMM")}
+                      </div>
                     </div>
                     <VoteSummary
                       {...scoreByOptionId[option.id]}
@@ -486,7 +500,7 @@ const MostPopular = () => {
                   <div>
                     <ButtonLink
                       href={createPollLink("/options")}
-                      className="w-full"
+                      className="w-full border-gray-200"
                       icon={CalendarIcon}
                     >
                       <Trans i18nKey="poll.book" defaults="Book" />
