@@ -35,7 +35,7 @@ const SubMenuLayout: React.FunctionComponent<{
   menuItems?: {
     href: string;
     icon: React.ComponentType<{ className?: string }>;
-    title: string;
+    title: React.ReactNode;
   }[];
 }> = ({ children, title, icon, menuItems }) => {
   const { t } = useTranslation();

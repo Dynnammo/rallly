@@ -1,11 +1,11 @@
 import { withAuthIfRequired, withSessionSsr } from "@rallly/backend/next";
 import { Participant, Vote } from "@rallly/database";
-import { DotsHorizontalIcon, InboxIcon } from "@rallly/icons";
-import { preventWidows } from "@rallly/utils";
+import { CalendarIcon, DotsHorizontalIcon } from "@rallly/icons";
 import { createColumnHelper } from "@tanstack/react-table";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import { GetServerSideProps } from "next";
+import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import toast from "react-hot-toast";
@@ -18,7 +18,9 @@ import { ScoreSummary } from "@/components/poll/score-summary";
 import UserAvatar from "@/components/poll/user-avatar";
 import VoteIcon from "@/components/poll/vote-icon";
 import { Table } from "@/components/table";
+import { Trans } from "@/components/trans";
 import {
+  useCreatePollLink,
   useCurrentEvent,
   useCurrentPollOptions,
   useCurrentPollResponses,
@@ -191,35 +193,164 @@ const Responses = () => {
   );
 };
 
+// const Page: NextPageWithLayout = () => {
+//   const { data: responses } = useCurrentPollResponses();
+//   return (
+//     <div className="">
+//       {responses?.length === 0 ? (
+//         <div className="bg-graph overflow-auto rounded-md border p-8 lg:p-16">
+//           <div className="flex w-full justify-center ">
+//             <div className="w-full max-w-md text-center">
+//               <InboxIcon className="mb-2 inline-block h-10" />
+//               <div className="mb-4 text-xl font-semibold">
+//                 <Trans i18nKey="poll.noResponses" defaults="No responses yet" />
+//               </div>
+//               <CopyLink />
+//               <div className="mt-4 text-slate-500">
+//                 <Trans
+//                   i18nKey="poll.shareLinkInstruction"
+//                   defaults="Share this link with your participants to begin collecting responses."
+//                 />
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       ) : (
+//         <div>
+
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
 const Page: NextPageWithLayout = () => {
-  const { data: responses } = useCurrentPollResponses();
-  const { t } = useTranslation();
   return (
-    <div className="bg-white p-4">
-      {responses?.length === 0 ? (
-        <div className="bg-graph overflow-auto rounded-md border p-8 lg:p-16">
-          <div className="flex w-full justify-center ">
-            <div className="w-full max-w-md text-center">
-              <InboxIcon className="mb-2 inline-block h-10" />
-              <div className="mb-4 text-xl font-semibold">
-                {t("No responses yet...")}
-              </div>
-              <CopyLink />
-              <div className="mt-4 text-slate-500">
-                {preventWidows(
-                  t(
-                    "Share this link with your participants to begin collecting responses.",
-                  ),
-                )}
-              </div>
-            </div>
+    <div className="space-y-8">
+      <MostPopular />
+    </div>
+  );
+};
+
+const MostPopular = () => {
+  const createPollLink = useCreatePollLink();
+  const { data: responses } = useCurrentPollResponses();
+  const { data: options = [] } = useCurrentPollOptions();
+  const bestOptions = React.useMemo(() => {
+    if (!responses) return [];
+
+    const votes = responses.flatMap((response) => response.votes);
+
+    const scoreByOptionId: Record<
+      string,
+      {
+        yes: number;
+        ifNeedBe: number;
+        no: number;
+      }
+    > = {};
+
+    for (const vote of votes) {
+      if (!scoreByOptionId[vote.optionId]) {
+        scoreByOptionId[vote.optionId] = { yes: 0, ifNeedBe: 0, no: 0 };
+      }
+
+      switch (vote.type) {
+        case "yes":
+          scoreByOptionId[vote.optionId].yes += 1;
+          break;
+        case "ifNeedBe":
+          scoreByOptionId[vote.optionId].ifNeedBe += 1;
+          break;
+        case "no":
+          scoreByOptionId[vote.optionId].no += 1;
+          break;
+      }
+    }
+
+    // Get top 3 options
+
+    return Object.keys(scoreByOptionId)
+      .sort((a, b) => scoreByOptionId[b].yes - scoreByOptionId[a].yes)
+      .slice(0, 3)
+      .flatMap((optionId) => {
+        const option = options.find((o) => o.id === optionId);
+        if (option) {
+          return {
+            ...option,
+            score: scoreByOptionId[optionId],
+          };
+        }
+
+        return [];
+      });
+  }, [responses, options]);
+
+  return (
+    <div>
+      <div className="grid gap-4">
+        <div>
+          <h2 className="text-lg tracking-tight">
+            <Trans i18nKey="poll.mostPopular" defaults="Most Popular" />
+          </h2>
+          <p className="text-gray-500">
+            <Trans
+              i18nKey="poll.bestOptionsDescription"
+              defaults="These are the most popular dates with your participants"
+            />
+          </p>
+        </div>
+        <div className="divide-y rounded border">
+          <div className="bg-graph col-span-2 grid grid-cols-1 lg:grid-cols-3">
+            {bestOptions.map((option) => {
+              return (
+                <div key={option.id} className="">
+                  <div className="space-y-4 p-4">
+                    <div className="font-bold">
+                      {dayjs(option.start).format("LL")}
+                    </div>
+                    <div>
+                      <div className="flex h-2 overflow-hidden rounded-sm bg-gray-300">
+                        <div
+                          className="h-full bg-green-500"
+                          style={{
+                            width:
+                              (option.score.yes / options.length) * 100 + "%",
+                          }}
+                        />
+                        <div
+                          className="h-full bg-amber-400"
+                          style={{
+                            width:
+                              (option.score.ifNeedBe / options.length) * 100 +
+                              "%",
+                          }}
+                        />
+                        <div
+                          className="h-full "
+                          style={{
+                            width:
+                              (option.score.no / options.length) * 100 + "%",
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="flex p-2.5">
+            <Link
+              className="btn-default gap-2"
+              href={createPollLink("/options")}
+            >
+              <CalendarIcon className="h-5" />
+              <Trans i18nKey="poll.viewResults" defaults="View All Dates" />
+            </Link>
           </div>
         </div>
-      ) : (
-        <div>
-          <Responses />
-        </div>
-      )}
+      </div>
     </div>
   );
 };

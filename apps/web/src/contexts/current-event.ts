@@ -1,4 +1,5 @@
 import { trpc } from "@rallly/backend";
+import React from "react";
 import { createStateContext } from "react-use";
 
 export const [usePollId, PollIdProvider] = createStateContext<string>("");
@@ -37,6 +38,15 @@ const [usePollResults, PollResultsProvider] = createStateContext<{
   highScore: 0,
   scoresByOptionId: {},
 });
+
+export const useCreatePollLink = () => {
+  const pollId = useCurrentEventId();
+  const basePath = `/poll/${pollId}`;
+  return React.useCallback(
+    (path?: string) => (path ? `${basePath}/${path}` : basePath),
+    [basePath],
+  );
+};
 
 export const useScore = (optionId: string) => {
   const { data: participants = [] } = useCurrentPollResponses();
