@@ -5,6 +5,7 @@ import {
   ClockIcon,
   EyeIcon,
   QuestionMarkCircleIcon,
+  StarIcon,
   UsersIcon,
 } from "@rallly/icons";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -17,6 +18,7 @@ import React from "react";
 import toast from "react-hot-toast";
 import { useCopyToClipboard } from "react-use";
 
+import { Button } from "@/components/button";
 import { getAdminLayout } from "@/components/layouts/admin-layout";
 import { ScoreSummary } from "@/components/poll/score-summary";
 import UserAvatar from "@/components/poll/user-avatar";
@@ -89,7 +91,10 @@ const VoteSummary = (props: {
     <span className="inline-flex gap-3 text-sm font-semibold tabular-nums">
       <span className="flex items-center gap-1.5">
         <VoteIcon type="yes" />
-        {props.yes}
+        <span>
+          {props.yes}
+          <span className="text-gray-400">{`/${props.total}`}</span>
+        </span>
       </span>
       {props.ifNeedBe ? (
         <span className="flex items-center gap-1.5">
@@ -219,17 +224,28 @@ const Heading = (props: { id: string; start: Date; duration: number }) => {
 //   );
 // };
 
-const Page: NextPageWithLayout = () => {
-  return (
-    <div className="space-y-8">
-      <MostPopular />
-      <RecentlyVoted />
-    </div>
-  );
+type SectionProps = {
+  title: React.ReactNode;
+  subtitle?: React.ReactNode;
+  actions?: React.ReactNode;
 };
 
-const Section = (props: React.PropsWithChildren) => (
-  <div className="space-y-4">{props.children}</div>
+const Section = ({
+  children,
+  title,
+  subtitle,
+  actions,
+}: React.PropsWithChildren<SectionProps>) => (
+  <section className="overflow-hidden rounded border bg-white shadow-sm">
+    <div className="flex justify-between border-b px-4 py-3">
+      <div>
+        <h2 className="text-lg tracking-tight">{title}</h2>
+        <p className="text-gray-500">{subtitle}</p>
+      </div>
+    </div>
+    <div>{children}</div>
+    <div className="border-t bg-gray-50 p-3">{actions}</div>
+  </section>
 );
 
 const Card = (
@@ -238,17 +254,7 @@ const Card = (
     footer?: React.ReactNode;
   }>,
 ) => {
-  return (
-    <div
-      className={clsx(
-        "overflow-hidden rounded border bg-white",
-        props.className,
-      )}
-    >
-      {props.children}
-      <div className="border-t p-3">{props.footer}</div>
-    </div>
-  );
+  return <div className={clsx(props.className)}>{props.children}</div>;
 };
 
 const ButtonLink = (
@@ -275,26 +281,25 @@ const RecentlyVoted = () => {
   const { data: options } = useCurrentPollOptions();
   const createPollLink = useCreatePollLink();
   return (
-    <Section>
-      <SectionHeader
-        title={<Trans i18nKey="poll.recentlyVoted" defaults="Recently Voted" />}
-        subtitle={
+    <Section
+      title={<Trans i18nKey="poll.recentlyVoted" defaults="Recently Voted" />}
+      subtitle={
+        <Trans
+          i18nKey="poll.recentlyVotedSubtitle"
+          defaults="These participants have voted."
+        />
+      }
+      actions={
+        <ButtonLink href={createPollLink("/participants")} icon={UsersIcon}>
           <Trans
-            i18nKey="poll.recentlyVotedSubtitle"
-            defaults="These participants have voted."
+            i18nKey="poll.viewAllParticipants"
+            values={{ count: responses?.length ?? 0 }}
+            defaults="View {count, plural, one {# participant} other {# participants}}"
           />
-        }
-      />
-      <Card
-        footer={
-          <ButtonLink href={createPollLink("/participants")} icon={UsersIcon}>
-            <Trans
-              i18nKey="poll.viewAllParticipants"
-              defaults="View All Participants"
-            />
-          </ButtonLink>
-        }
-      >
+        </ButtonLink>
+      }
+    >
+      <Card>
         <Table
           layout="auto"
           data={responses?.slice(0, 5) ?? []}
@@ -379,19 +384,6 @@ const VoteSummaryProgressBar = (props: {
   );
 };
 
-const SectionHeader = (props: {
-  className?: string;
-  title: React.ReactNode;
-  subtitle?: React.ReactNode;
-}) => {
-  return (
-    <div className="grid-4 grid">
-      <h2 className="text-lg tracking-tight">{props.title}</h2>
-      <p className="text-gray-500">{props.subtitle}</p>
-    </div>
-  );
-};
-
 const MostPopular = () => {
   const createPollLink = useCreatePollLink();
   const { data: responses = [] } = useCurrentPollResponses();
@@ -448,30 +440,31 @@ const MostPopular = () => {
   }, [scoreByOptionId, options]);
 
   return (
-    <Section>
-      <SectionHeader
-        title={<Trans i18nKey="poll.mostPopular" defaults="Most Popular" />}
-        subtitle={
+    <Section
+      title={<Trans i18nKey="poll.mostPopular" defaults="Most Popular" />}
+      subtitle={
+        <Trans
+          i18nKey="poll.bestOptionsDescription"
+          defaults="These are the most popular dates with your participants."
+        />
+      }
+      actions={
+        <ButtonLink href={createPollLink("/participants")} icon={CalendarIcon}>
           <Trans
-            i18nKey="poll.bestOptionsDescription"
-            defaults="These are the most popular dates with your participants."
+            i18nKey="poll.viewAllDates"
+            values={{ count: options.length }}
+            defaults="View {count, plural, one {# Date} other {# Dates}}"
           />
-        }
-      />
-
-      <Card
-        footer={
-          <ButtonLink href={createPollLink("/options")} icon={CalendarIcon}>
-            <Trans i18nKey="poll.viewAllDates" defaults="View All Dates" />
-          </ButtonLink>
-        }
-      >
-        <div className="col-span-2 flex divide-x">
+        </ButtonLink>
+      }
+    >
+      <Card>
+        <div className="divide-y md:flex md:divide-y-0 md:divide-x">
           {bestOptions.map((option, i) => {
             return (
               <div key={option.id} className="grow basis-0">
-                <div className="space-y-4 p-4">
-                  <div className="flex justify-between">
+                <div className="flex items-center gap-4 p-3">
+                  <div className="flex items-center justify-between gap-4">
                     <div className="relative min-w-[60px] rounded border py-1.5 px-2.5 text-center">
                       <span className="absolute -right-2.5 -top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-gray-200 text-xs font-bold shadow-sm">
                         {i + 1}
@@ -479,8 +472,8 @@ const MostPopular = () => {
                       <div className="text-xs leading-tight text-gray-400">
                         {dayjs(option.start).format("dd")}
                       </div>
-                      <div className="text-xl font-bold leading-tight">
-                        {dayjs(option.start).format("D")}
+                      <div className="text-lg font-bold leading-tight">
+                        {dayjs(option.start).format("DD")}
                       </div>
                       <div className="text-xs font-semibold uppercase leading-tight">
                         {dayjs(option.start).format("MMM")}
@@ -491,20 +484,16 @@ const MostPopular = () => {
                       total={responses?.length || 0}
                     />
                   </div>
-                  <div>
+                  <div className="grow">
                     <VoteSummaryProgressBar
                       total={responses?.length || 0}
                       {...option.score}
                     />
                   </div>
                   <div>
-                    <ButtonLink
-                      href={createPollLink("/options")}
-                      className="w-full border-gray-200"
-                      icon={CalendarIcon}
-                    >
+                    <Button icon={<StarIcon />}>
                       <Trans i18nKey="poll.book" defaults="Book" />
-                    </ButtonLink>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -513,6 +502,15 @@ const MostPopular = () => {
         </div>
       </Card>
     </Section>
+  );
+};
+
+const Page: NextPageWithLayout = () => {
+  return (
+    <div className="space-y-4">
+      <MostPopular />
+      <RecentlyVoted />
+    </div>
   );
 };
 

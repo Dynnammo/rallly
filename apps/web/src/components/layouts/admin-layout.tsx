@@ -69,7 +69,7 @@ const AdminLayoutInner: React.FunctionComponent<{
       <Head>
         <title>{data?.title}</title>
       </Head>
-      <div className="rounded-md border bg-white shadow-sm">
+      <div className="rounded-md border bg-gray-50 shadow-sm">
         <div className="sticky top-0 z-10 rounded-t-md border-b bg-white py-4 px-5">
           <div className="">
             <h1 className="text-xl tracking-tight md:text-2xl">
@@ -97,11 +97,6 @@ const AdminLayoutInner: React.FunctionComponent<{
                 icon: CalendarIcon,
               },
               {
-                href: createPollLink("/settings"),
-                title: <Trans i18nKey="poll.settings" defaults="Settings" />,
-                icon: CogIcon,
-              },
-              {
                 href: createPollLink("/participants"),
                 title: (
                   <Trans i18nKey="poll.participants" defaults="Participants" />
@@ -113,6 +108,11 @@ const AdminLayoutInner: React.FunctionComponent<{
                 title: <Trans i18nKey="poll.comments" defaults="Comments" />,
                 icon: ChatIcon,
               },
+              {
+                href: createPollLink("/settings"),
+                title: <Trans i18nKey="poll.settings" defaults="Settings" />,
+                icon: CogIcon,
+              },
             ]?.map((item, i) => (
               <MenuItem
                 key={i}
@@ -123,7 +123,7 @@ const AdminLayoutInner: React.FunctionComponent<{
             ))}
           </div>
         </div>
-        <div className="bg-gray-50 px-5 py-4">{children}</div>
+        <div className="p-5">{children}</div>
       </div>
     </>
   );
