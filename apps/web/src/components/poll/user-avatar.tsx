@@ -127,7 +127,7 @@ export const Avatar = (props: {
 };
 
 export const You = () => {
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
   return (
     <span className="inline-flex items-center gap-2">
       <span>

@@ -38,7 +38,7 @@ const SubMenuLayout: React.FunctionComponent<{
     title: string;
   }[];
 }> = ({ children, title, icon, menuItems }) => {
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
   return (
     <div className="card overflow-hidden">
       <Breadcrumbs

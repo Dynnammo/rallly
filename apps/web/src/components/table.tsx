@@ -34,7 +34,7 @@ export const Table = <
     initialState: { pagination: { pageSize } },
     getPaginationRowModel: getPaginationRowModel(),
   });
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
   return (
     <div className={props.className}>
       <table

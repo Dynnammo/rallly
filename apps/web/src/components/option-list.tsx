@@ -11,7 +11,7 @@ import {
 import { useDayjs } from "@/utils/dayjs";
 
 const TempOption = (props: { optionId: string }) => {
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
   const { dayjs } = useDayjs();
   const { data: participants = [] } = useCurrentPollResponses();
   const { data: options = [] } = useCurrentPollOptions();

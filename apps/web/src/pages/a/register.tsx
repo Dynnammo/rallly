@@ -9,7 +9,7 @@ import { RegisterForm } from "../../components/auth/login-form";
 import { withPageTranslations } from "../../utils/with-page-translations";
 
 const Page: NextPageWithLayout = () => {
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
   const router = useRouter();
   return (
     <>

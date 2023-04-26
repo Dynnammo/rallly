@@ -13,7 +13,7 @@ import { NextPageWithLayout } from "../../types";
 import { withPageTranslations } from "../../utils/with-page-translations";
 
 const GuestProfile = (props: { user: GuestUserSession }) => {
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
   return (
     <div className="space-y-8">
       <div className="space-y-4">
@@ -56,7 +56,7 @@ const UserProfile = (props: { user: RegisteredUserSession }) => {
 
 const Page: NextPageWithLayout = () => {
   const { user } = useUser();
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
 
   return (
     <>

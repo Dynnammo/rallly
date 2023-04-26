@@ -12,7 +12,7 @@ import { NextPageWithLayout } from "@/types";
 import { withPageTranslations } from "../../utils/with-page-translations";
 
 const Page: NextPageWithLayout<{ referer: string | null }> = () => {
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
 
   const router = useRouter();
   return (

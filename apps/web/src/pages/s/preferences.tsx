@@ -8,7 +8,7 @@ import { NextPageWithLayout } from "@/types";
 import { withPageTranslations } from "@/utils/with-page-translations";
 
 const Page: NextPageWithLayout = () => {
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
   return (
     <div>
       <Head>

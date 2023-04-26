@@ -17,7 +17,7 @@ import { PollIdProvider, useCurrentEvent } from "@/contexts/current-event";
 import { NextPageWithLayout } from "../../types";
 
 const AdminLayout = ({ children }: React.PropsWithChildren) => {
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
   const router = useRouter();
   const [urlId] = React.useState(router.query.urlId as string);
 
@@ -31,7 +31,7 @@ const AdminLayout = ({ children }: React.PropsWithChildren) => {
 const AdminLayoutInner: React.FunctionComponent<{
   children?: React.ReactNode;
 }> = ({ children }) => {
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
 
   const { data } = useCurrentEvent();
 

@@ -12,12 +12,12 @@ import clsx from "clsx";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { Trans, useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next";
 
-import { DragScroll } from "@/components/drag-scroll";
 import { Breadcrumbs } from "@/components/layouts/standard-layout/breadcrumbs";
 import { getStandardLayout } from "@/components/layouts/v3-layout";
 import { Table } from "@/components/table";
+import { Trans } from "@/components/trans";
 import { ParticipantAvatarBar } from "@/components/ui/participant-avatar-bar";
 import { useDayjs } from "@/utils/dayjs";
 
@@ -25,7 +25,7 @@ import { NextPageWithLayout } from "../types";
 import { withPageTranslations } from "../utils/with-page-translations";
 
 const CreateNewButton = () => {
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
   return (
     <Link href="/new" className="btn-primary gap-2">
       {t("create")}
@@ -64,7 +64,7 @@ type PollTableRow = {
 const columnHelper = createColumnHelper<PollTableRow>();
 
 const Page: NextPageWithLayout = () => {
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
 
   const columns = [
     columnHelper.accessor("title", {

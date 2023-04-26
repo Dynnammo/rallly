@@ -26,7 +26,7 @@ import { usePoll } from "./poll-context";
 import Tooltip from "./tooltip";
 
 const TempOption = (props: { optionId: string }) => {
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
   const { dayjs } = useDayjs();
   const { data: participants = [] } = useCurrentPollResponses();
   const { data: options = [] } = useCurrentPollOptions();

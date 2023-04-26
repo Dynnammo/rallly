@@ -30,7 +30,7 @@ import { NextPageWithLayout } from "../../types";
 
 export const CopyLink = () => {
   const { data: poll } = useCurrentEvent();
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
 
   const participantUrl = `${window.location.origin}/p/${poll?.participantUrlId}`;
   const [didCopy, setDidCopy] = React.useState(false);
@@ -132,7 +132,7 @@ const Responses = () => {
   const { data: responses = [] } = useCurrentPollResponses();
   const { data: options = [] } = useCurrentPollOptions();
 
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
   return (
     <DragScroll className="card relative bg-white">
       <Table
@@ -193,7 +193,7 @@ const Responses = () => {
 
 const Page: NextPageWithLayout = () => {
   const { data: responses } = useCurrentPollResponses();
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
   return (
     <div className="bg-white p-4">
       {responses?.length === 0 ? (

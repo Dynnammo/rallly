@@ -18,7 +18,7 @@ export const ParticipantAvatarBar = ({
   participants,
   max = Infinity,
 }: ParticipantAvatarBarProps) => {
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
   const hiddenCount = participants.length - max;
   return (
     <AvatarColorContext.Provider value={{ seed: pollId }}>

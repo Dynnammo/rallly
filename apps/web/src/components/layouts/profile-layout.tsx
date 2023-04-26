@@ -12,7 +12,7 @@ import { useUser } from "../user-provider";
 const ProfileLayout: React.FunctionComponent<{
   children?: React.ReactNode;
 }> = ({ children }) => {
-  const { t } = useTranslation("app");
+  const { t } = useTranslation();
   const { user } = useUser();
   return (
     <SubMenuLayout
