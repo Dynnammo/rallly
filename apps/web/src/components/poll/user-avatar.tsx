@@ -6,6 +6,7 @@ import Badge from "../badge";
 
 export interface UserAvaterProps {
   name: string;
+  seed?: string;
   className?: string;
   size?: "default" | "large";
   color?: string;
@@ -46,7 +47,13 @@ const UserAvatar: React.FunctionComponent<UserAvaterProps> = ({
 }) => {
   const { t } = useTranslation();
   if (!showName) {
-    return <ColoredAvatar className={className} name={forwardedProps.name} />;
+    return (
+      <ColoredAvatar
+        seed={forwardedProps.seed}
+        className={className}
+        name={forwardedProps.name}
+      />
+    );
   }
 
   return (
@@ -57,7 +64,7 @@ const UserAvatar: React.FunctionComponent<UserAvaterProps> = ({
       )}
     >
       <span>
-        <ColoredAvatar name={forwardedProps.name} />
+        <ColoredAvatar seed={forwardedProps.seed} name={forwardedProps.name} />
       </span>
       <span className="min-w-0 truncate font-medium">
         {forwardedProps.name}
@@ -85,8 +92,12 @@ function requiresWhiteOrDarkText(color: RGBColor) {
   return L > 0.5 ? "dark" : "white";
 }
 
-export const ColoredAvatar = (props: { name: string; className?: string }) => {
-  const color = getRandomAvatarColor(props.name);
+export const ColoredAvatar = (props: {
+  seed?: string;
+  name: string;
+  className?: string;
+}) => {
+  const color = getRandomAvatarColor(props.seed ?? props.name);
   const rgbColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
   return (
     <Avatar

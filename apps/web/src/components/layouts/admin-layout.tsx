@@ -34,7 +34,7 @@ const MenuItem = (props: {
       className={clsx(
         "btn-default flex h-10 translate-y-px items-center justify-start gap-2 px-2.5",
         {
-          "text-primary-600 pointer-events-none": router.asPath === props.href,
+          "pointer-events-none bg-gray-100": router.asPath === props.href,
         },
       )}
     >
@@ -70,7 +70,7 @@ const AdminLayoutInner: React.FunctionComponent<{
         <title>{data?.title}</title>
       </Head>
       <div className="rounded-md border bg-gray-50 shadow-sm">
-        <div className="sticky top-0 z-10 rounded-t-md border-b bg-white py-4 px-5">
+        <div className="sticky top-0 z-10 rounded-t-md border-b bg-white p-4">
           <div className="">
             <h1 className="text-xl tracking-tight md:text-2xl">
               {data?.title}
@@ -83,7 +83,7 @@ const AdminLayoutInner: React.FunctionComponent<{
               />
             </p>
           </div>
-          <div className={clsx("-mx-3 mt-4 flex gap-2")}>
+          <div className={clsx("mt-4 flex gap-2")}>
             {[
               {
                 href: createPollLink(),
@@ -92,24 +92,24 @@ const AdminLayoutInner: React.FunctionComponent<{
               },
 
               {
-                href: createPollLink("/dates"),
+                href: createPollLink("dates"),
                 title: <Trans i18nKey="poll.dates" defaults="Dates" />,
                 icon: CalendarIcon,
               },
               {
-                href: createPollLink("/participants"),
+                href: createPollLink("participants"),
                 title: (
                   <Trans i18nKey="poll.participants" defaults="Participants" />
                 ),
                 icon: UsersIcon,
               },
               {
-                href: createPollLink("/comments"),
+                href: createPollLink("comments"),
                 title: <Trans i18nKey="poll.comments" defaults="Comments" />,
                 icon: ChatIcon,
               },
               {
-                href: createPollLink("/settings"),
+                href: createPollLink("settings"),
                 title: <Trans i18nKey="poll.settings" defaults="Settings" />,
                 icon: CogIcon,
               },
@@ -123,7 +123,7 @@ const AdminLayoutInner: React.FunctionComponent<{
             ))}
           </div>
         </div>
-        <div className="p-5">{children}</div>
+        <div className="p-4">{children}</div>
       </div>
     </>
   );

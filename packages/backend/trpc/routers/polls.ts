@@ -393,6 +393,7 @@ export const polls = router({
         description: true,
         participants: {
           select: {
+            id: true,
             name: true,
           },
           orderBy: {

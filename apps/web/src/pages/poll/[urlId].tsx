@@ -3,9 +3,8 @@ import { Participant, Vote } from "@rallly/database";
 import {
   CalendarIcon,
   ClipboardCopyIcon,
-  ClockIcon,
-  EyeIcon,
   QuestionMarkCircleIcon,
+  ShareIcon,
   StarIcon,
   UserIcon,
   UsersIcon,
@@ -116,24 +115,6 @@ const VoteSummary = (props: {
   );
 };
 
-const Heading = (props: { id: string; start: Date; duration: number }) => {
-  const score = useScore(props.id);
-  return (
-    <div className="mx-auto whitespace-nowrap text-center">
-      <div className="text-xl font-bold">{dayjs(props.start).format("D")}</div>
-      <div className="text-sm uppercase">
-        {dayjs(props.start).format("MMM")}
-      </div>
-      {props.duration > 0 ? (
-        <div className="mt-2">{dayjs(props.start).format("LT")}</div>
-      ) : null}
-      <div className="mt-4">
-        <ScoreSummary yesScore={score.yes} orientation="vertical" />
-      </div>
-    </div>
-  );
-};
-
 // const Responses = () => {
 //   const { data: responses = [] } = useCurrentPollResponses();
 //   const { data: options = [] } = useCurrentPollOptions();
@@ -240,7 +221,7 @@ const Section = ({
   subtitle,
   actions,
 }: React.PropsWithChildren<SectionProps>) => (
-  <section className="overflow-hidden rounded border bg-white shadow-sm">
+  <section className="overflow-hidden rounded-md border bg-white">
     <div className="flex justify-between border-b px-4 py-3">
       <div>
         <h2 className="text-lg tracking-tight">{title}</h2>
@@ -294,7 +275,7 @@ const RecentlyVoted = () => {
         />
       }
       actions={
-        <ButtonLink href={createPollLink("/participants")} icon={UsersIcon}>
+        <ButtonLink href={createPollLink("participants")} icon={UsersIcon}>
           <Trans
             i18nKey="poll.viewAllParticipants"
             values={{ count: responses?.length ?? 0 }}
@@ -318,7 +299,11 @@ const RecentlyVoted = () => {
               cell: (info) => {
                 return (
                   <div>
-                    <UserAvatar name={info.getValue()} showName={true} />
+                    <UserAvatar
+                      seed={info.row.original.id}
+                      name={info.getValue()}
+                      showName={true}
+                    />
                   </div>
                 );
               },
@@ -393,16 +378,21 @@ const MostPopular = () => {
   const { data: responses = [] } = useCurrentPollResponses();
   const { data: options = [] } = useCurrentPollOptions();
   const scoreByOptionId = React.useMemo(() => {
-    const votes = responses.flatMap((response) => response.votes);
+    const res = options.reduce<
+      Record<
+        string,
+        {
+          yes: string[];
+          ifNeedBe: string[];
+          no: string[];
+        }
+      >
+    >((acc, option) => {
+      acc[option.id] = { yes: [], ifNeedBe: [], no: [] };
+      return acc;
+    }, {});
 
-    const res: Record<
-      string,
-      {
-        yes: string[];
-        ifNeedBe: string[];
-        no: string[];
-      }
-    > = {};
+    const votes = responses.flatMap((response) => response.votes);
 
     for (const vote of votes) {
       if (!res[vote.optionId]) {
@@ -422,15 +412,26 @@ const MostPopular = () => {
       }
     }
     return res;
-  }, [responses]);
+  }, [responses, options]);
 
   const bestOptions = React.useMemo(() => {
     // Get top 3 options
 
     return Object.keys(scoreByOptionId)
-      .sort(
-        (a, b) => scoreByOptionId[b].yes.length - scoreByOptionId[a].yes.length,
-      )
+      .sort((a, b) => {
+        const yesScore =
+          scoreByOptionId[b].yes.length - scoreByOptionId[a].yes.length;
+
+        if (yesScore === 0) {
+          // if have same amount of yes votes, check ifNeedBe
+          return (
+            scoreByOptionId[b].ifNeedBe.length -
+            scoreByOptionId[a].ifNeedBe.length
+          );
+        }
+
+        return yesScore;
+      })
       .slice(0, 3)
       .flatMap((optionId) => {
         const option = options.find((o) => o.id === optionId);
@@ -455,7 +456,7 @@ const MostPopular = () => {
         />
       }
       actions={
-        <ButtonLink href={createPollLink("/participants")} icon={CalendarIcon}>
+        <ButtonLink href={createPollLink("participants")} icon={CalendarIcon}>
           <Trans
             i18nKey="poll.viewAllDates"
             values={{ count: options.length }}
@@ -465,18 +466,21 @@ const MostPopular = () => {
       }
     >
       <Card>
-        <div className="divide-y md:flex md:divide-y-0 md:divide-x">
-          {bestOptions.map((option, i) => {
+        <div className="bg-graph flex gap-3 p-3">
+          {bestOptions.map((option) => {
             return (
-              <div key={option.id} className="grow basis-1/3">
-                <div className="flex items-start gap-4 border-b bg-white p-4">
+              <div
+                key={option.id}
+                className="grow rounded border bg-white md:basis-1/3"
+              >
+                <div className="flex items-start gap-4 border-b p-4">
                   <div className="w-16 overflow-hidden rounded-md border border-slate-200 bg-white text-center text-slate-800">
                     <div className="border-b  border-slate-200 bg-slate-50 pt-0.5 text-xs leading-4">
                       {dayjs(option.start).format("ddd")}
                     </div>
                     <div className="py-1">
-                      <div className="text-lg font-bold ">
-                        {dayjs(option.start).format("D")}
+                      <div className="text-lg font-bold leading-tight">
+                        {dayjs(option.start).format("DD")}
                       </div>
                       <div className="text-xs font-bold uppercase">
                         {dayjs(option.start).format("MMM")}
@@ -485,19 +489,6 @@ const MostPopular = () => {
                   </div>
                   <div>
                     <ul>
-                      <li>
-                        <Trans
-                          i18nKey="poll.optionDuration"
-                          values={{
-                            duration:
-                              option.duration === 0
-                                ? "All Day"
-                                : option.duration,
-                          }}
-                          components={{ b: <strong /> }}
-                          defaults="<b>Duration:</b> {duration}"
-                        />
-                      </li>
                       {option.duration ? (
                         <li>
                           <Trans
@@ -511,16 +502,30 @@ const MostPopular = () => {
                         </li>
                       ) : null}
                       <li>
-                        <div className="grid gap-3 py-2">
-                          <ParticipantAvatarBar
-                            participants={responses.filter((response) => {
-                              return scoreByOptionId[option.id].yes.includes(
-                                response.id,
-                              );
-                            })}
-                            max={5}
-                          />
-                        </div>
+                        <Trans
+                          i18nKey="poll.optionDuration"
+                          values={{
+                            duration:
+                              option.duration === 0
+                                ? "All Day"
+                                : dayjs
+                                    .duration(option.duration, "minutes")
+                                    .humanize(),
+                          }}
+                          components={{ b: <strong /> }}
+                          defaults="<b>Duration:</b> {duration}"
+                        />
+                      </li>
+
+                      <li className="mt-2">
+                        <ParticipantAvatarBar
+                          participants={responses.filter((response) => {
+                            return scoreByOptionId[option.id].yes.includes(
+                              response.id,
+                            );
+                          })}
+                          max={5}
+                        />
                       </li>
                     </ul>
                   </div>
@@ -556,25 +561,41 @@ const MostPopular = () => {
 const ParticipantLink = () => {
   const { data: event } = useCurrentEvent();
   return (
-    <div className="-mx-5 -mt-5 flex items-center justify-end gap-1 border-b bg-white py-3 px-5">
-      <input
-        readOnly={true}
-        className="h-9 w-72 rounded border bg-gray-50 px-2.5"
-        value={`${window.location.origin}/p/${event?.participantUrlId}`}
-      />
-      <div>
-        <Button icon={<ClipboardCopyIcon />} />
+    <div className="flex items-center justify-end gap-2 rounded-md border bg-white p-4 py-2.5 shadow-sm">
+      <div className="font-semibold">Share link:</div>
+      <div className="flex grow items-center gap-2">
+        <Link
+          target="_blank"
+          className="font-mono tracking-tight"
+          href={`${window.location.origin}/p/${event?.participantUrlId}`}
+        >{`${window.location.origin}/p/${event?.participantUrlId}`}</Link>
+        <div>
+          <Button icon={<ClipboardCopyIcon />} />
+        </div>
       </div>
     </div>
   );
 };
 
-const Page: NextPageWithLayout = () => {
+const ShareHint = () => {
   return (
-    <div className="space-y-5">
+    <div className="flex rounded-md border border-slate-200 bg-slate-50 px-3 py-2.5 text-slate-600 shadow-sm">
+      <ShareIcon className="mr-4 h-6" />
+      <Trans
+        i18nKey="poll.shareHint"
+        defaults="Share this link with your participants to start gathering responses"
+      />
+    </div>
+  );
+};
+
+const Page: NextPageWithLayout = () => {
+  const { data: responses = [] } = useCurrentPollResponses();
+  return (
+    <div className="space-y-4">
       <ParticipantLink />
       <MostPopular />
-      <RecentlyVoted />
+      {responses?.length > 0 ? <RecentlyVoted /> : null}
     </div>
   );
 };

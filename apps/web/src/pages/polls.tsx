@@ -68,7 +68,7 @@ const Page: NextPageWithLayout = () => {
 
   const columns = [
     columnHelper.accessor("title", {
-      header: () => <Trans t={t} i18nKey="title" />,
+      header: () => <Trans i18nKey="title" />,
       size: 300,
       cell: (info) => (
         <div className="flex items-center gap-2">
@@ -91,18 +91,14 @@ const Page: NextPageWithLayout = () => {
       ),
     }),
     columnHelper.accessor("participants", {
-      header: () => <Trans t={t} i18nKey="participants" />,
+      header: () => <Trans i18nKey="participants" />,
       size: 160,
       cell: (info) => (
-        <ParticipantAvatarBar
-          pollId={info.row.original.id}
-          participants={info.getValue()}
-          max={5}
-        />
+        <ParticipantAvatarBar participants={info.getValue()} max={5} />
       ),
     }),
     columnHelper.accessor("createdAt", {
-      header: () => <Trans t={t} i18nKey="dateCreated" />,
+      header: () => <Trans i18nKey="dateCreated" />,
       size: 120,
       cell: (info) => (
         <span className="text-slate-500">
@@ -113,7 +109,7 @@ const Page: NextPageWithLayout = () => {
     columnHelper.accessor("closed", {
       header: () => (
         <div className="text-center">
-          <Trans t={t} i18nKey="status" />
+          <Trans i18nKey="status" />
         </div>
       ),
       size: 70,
@@ -142,6 +138,7 @@ const Page: NextPageWithLayout = () => {
               data={polls}
               className="max-w-full overflow-auto"
               columns={columns}
+              pageSize={10}
             />
           ) : (
             <EmptyState />

@@ -4,7 +4,7 @@ import { ColoredAvatar } from "@/components/poll/user-avatar";
 import Tooltip from "@/components/tooltip";
 
 interface ParticipantAvatarBarProps {
-  participants: { name: string }[];
+  participants: { id: string; name: string }[];
   max: number;
 }
 
@@ -20,6 +20,7 @@ export const ParticipantAvatarBar = ({
         .map((participant, index) => (
           <Tooltip key={index} content={participant.name}>
             <ColoredAvatar
+              seed={participant.id}
               className="-mr-1 select-none ring-2 ring-white"
               name={participant.name}
             />
