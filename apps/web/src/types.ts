@@ -11,3 +11,5 @@ export type PropsOf<TTag extends ReactTag> = TTag extends React.ElementType
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: React.ReactElement) => React.ReactNode;
 };
+
+export type IconComponent = React.ComponentType<{ className?: string }>;

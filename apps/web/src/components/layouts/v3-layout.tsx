@@ -56,7 +56,7 @@ const StandardLayout: React.FunctionComponent<{
         <AnimatePresence initial={false} exitBeforeEnter={true}>
           <m.div
             key={router.pathname.split("/")[1]}
-            transition={{ duration: 0.1, type: "spring" }}
+            transition={{ duration: 0.2, type: "spring" }}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}

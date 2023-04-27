@@ -18,9 +18,45 @@ export const useCurrentEvent = () => {
   return trpc.polls.get.useQuery({ pollId });
 };
 
-export const useCurrentComments = () => {
-  const pollId = useCurrentEventId();
-  return trpc.polls.comments.list.useQuery({ pollId });
+export const useScoreByOptionId = () => {
+  const { data: responses = [] } = useCurrentPollResponses();
+  const { data: options = [] } = useCurrentPollOptions();
+  return React.useMemo(() => {
+    const res = options.reduce<
+      Record<
+        string,
+        {
+          yes: string[];
+          ifNeedBe: string[];
+          no: string[];
+        }
+      >
+    >((acc, option) => {
+      acc[option.id] = { yes: [], ifNeedBe: [], no: [] };
+      return acc;
+    }, {});
+
+    const votes = responses.flatMap((response) => response.votes);
+
+    for (const vote of votes) {
+      if (!res[vote.optionId]) {
+        res[vote.optionId] = { yes: [], ifNeedBe: [], no: [] };
+      }
+
+      switch (vote.type) {
+        case "yes":
+          res[vote.optionId].yes.push(vote.participantId);
+          break;
+        case "ifNeedBe":
+          res[vote.optionId].ifNeedBe.push(vote.participantId);
+          break;
+        case "no":
+          res[vote.optionId].no.push(vote.participantId);
+          break;
+      }
+    }
+    return res;
+  }, [responses, options]);
 };
 
 export const useCurrentPollOptions = () => {

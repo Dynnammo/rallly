@@ -1,13 +1,12 @@
 import { withAuthIfRequired, withSessionSsr } from "@rallly/backend/next";
 import { GetServerSideProps } from "next";
 
-import { Dashboard } from "@/components/pages/poll/dashboard";
 import { getAdminLayout } from "@/components/pages/poll/layout";
 import { NextPageWithLayout } from "@/types";
 import { withPageTranslations } from "@/utils/with-page-translations";
 
 const Page: NextPageWithLayout = () => {
-  return <Dashboard />;
+  return <div>settings</div>;
 };
 
 Page.getLayout = getAdminLayout;
