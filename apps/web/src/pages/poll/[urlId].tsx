@@ -20,8 +20,7 @@ import toast from "react-hot-toast";
 import { useCopyToClipboard } from "react-use";
 
 import { Button } from "@/components/button";
-import { getAdminLayout } from "@/components/layouts/admin-layout";
-import { ScoreSummary } from "@/components/poll/score-summary";
+import { getAdminLayout } from "@/components/pages/poll/admin-layout";
 import UserAvatar from "@/components/poll/user-avatar";
 import VoteIcon from "@/components/poll/vote-icon";
 import { Table } from "@/components/table";
@@ -32,7 +31,6 @@ import {
   useCurrentEvent,
   useCurrentPollOptions,
   useCurrentPollResponses,
-  useScore,
 } from "@/contexts/current-event";
 import { withPageTranslations } from "@/utils/with-page-translations";
 

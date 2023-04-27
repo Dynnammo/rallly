@@ -20,7 +20,7 @@ import {
   useCurrentEvent,
 } from "@/contexts/current-event";
 
-import { NextPageWithLayout } from "../../types";
+import { NextPageWithLayout } from "../../../types";
 
 const MenuItem = (props: {
   href: string;
