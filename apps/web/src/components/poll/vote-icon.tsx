@@ -32,7 +32,7 @@ const VoteIcon: React.FunctionComponent<{
     case "no":
       return (
         <NoIcon
-          className={clsx("text-slate-400", className, {
+          className={clsx("text-gray-400", className, {
             "h-5": size === "md",
             "h-3": size === "sm",
           })}

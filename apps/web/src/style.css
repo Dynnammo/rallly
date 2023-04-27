@@ -4,7 +4,7 @@
 
 @layer base {
   html {
-    @apply h-full bg-gray-200/75 font-sans text-base text-slate-800;
+    @apply h-full bg-white font-sans text-base text-slate-800;
   }
   body,
   #__next {

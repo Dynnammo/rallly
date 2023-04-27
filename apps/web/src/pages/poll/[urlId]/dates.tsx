@@ -49,7 +49,7 @@ const DatesTable: NextPageWithLayout = () => {
         />
       }
     >
-      <DragScroll>
+      <DragScroll className="rounded-md border">
         <Table
           layout="auto"
           data={options}

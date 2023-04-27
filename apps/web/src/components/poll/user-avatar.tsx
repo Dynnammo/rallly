@@ -59,7 +59,7 @@ const UserAvatar: React.FunctionComponent<UserAvaterProps> = ({
   return (
     <span
       className={clsx(
-        "inline-flex items-center space-x-2 overflow-hidden",
+        "inline-flex items-center space-x-3 overflow-hidden",
         className,
       )}
     >

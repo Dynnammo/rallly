@@ -16,6 +16,7 @@ import { useTranslation } from "next-i18next";
 
 import { Breadcrumbs } from "@/components/layouts/standard-layout/breadcrumbs";
 import { getStandardLayout } from "@/components/layouts/v3-layout";
+import { Section } from "@/components/pages/poll/components/section";
 import { Table } from "@/components/table";
 import { Trans } from "@/components/trans";
 import { ParticipantAvatarBar } from "@/components/ui/participant-avatar-bar";
@@ -129,21 +130,22 @@ const Page: NextPageWithLayout = () => {
         <title>{t("myPolls")}</title>
         <meta name="robots" content="noindex,nofollow" />
       </Head>
-      <div className="card">
-        <Breadcrumbs title={t("myPolls")} icon={ViewGridIcon} />
-        <div>
-          {polls.length > 0 ? (
-            <Table
-              layout="auto"
-              data={polls}
-              className="max-w-full overflow-auto"
-              columns={columns}
-              pageSize={10}
-            />
-          ) : (
-            <EmptyState />
-          )}
-        </div>
+      <div className="">
+        <Section
+          icon={ViewGridIcon}
+          title={<Trans defaults="Availability Polls" />}
+          subtitle={
+            <Trans defaults="A poll where participants vote for the date of an event" />
+          }
+        >
+          <div>
+            {polls.length > 0 ? (
+              <Table layout="auto" data={polls} columns={columns} />
+            ) : (
+              <EmptyState />
+            )}
+          </div>
+        </Section>
       </div>
     </>
   );

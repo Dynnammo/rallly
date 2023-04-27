@@ -14,11 +14,11 @@ export const Section = ({
   actions,
   icon: Icon,
 }: React.PropsWithChildren<SectionProps>) => (
-  <section className="overflow-hidden rounded-md border bg-white shadow-sm">
-    <div className="border-b py-3 px-4">
+  <section className="space-y-3 overflow-hidden bg-white">
+    <div className="">
       <div className="flex gap-1.5">
         {Icon ? (
-          <div className="p-1">
+          <div className="-ml-1 p-1">
             <Icon className="h-5" />
           </div>
         ) : null}
@@ -29,6 +29,6 @@ export const Section = ({
       <p className="hidden leading-tight text-gray-500 sm:block">{subtitle}</p>
     </div>
     <div>{children}</div>
-    {actions ? <div className="border-t bg-white p-2">{actions}</div> : null}
+    {actions ? <div className="bg-white">{actions}</div> : null}
   </section>
 );

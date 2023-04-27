@@ -19,7 +19,7 @@ export const VoteSummaryProgressBar = (props: {
         }}
       />
       <div
-        className="h-full bg-slate-300"
+        className="h-full bg-gray-300"
         style={{
           width: (props.no.length / props.total) * 100 + "%",
         }}

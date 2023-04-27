@@ -1,4 +1,5 @@
 import { QuestionMarkCircleIcon, UserIcon } from "@rallly/icons";
+import clsx from "clsx";
 
 import VoteIcon from "@/components/poll/vote-icon";
 

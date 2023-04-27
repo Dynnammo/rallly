@@ -13,6 +13,7 @@ import { Trans } from "@/components/trans";
 import { ParticipantAvatarBar } from "@/components/ui/participant-avatar-bar";
 import {
   useCreatePollLink,
+  useCurrentEvent,
   useCurrentPollOptions,
   useCurrentPollResponses,
   useScoreByOptionId,
@@ -23,6 +24,7 @@ export const MostPopularDates = () => {
   const scoreByOptionId = useScoreByOptionId();
   const { data: options = [] } = useCurrentPollOptions();
   const { data: responses = [] } = useCurrentPollResponses();
+  const { data: event } = useCurrentEvent();
 
   const bestOptions = React.useMemo(() => {
     // Get top 3 options
@@ -42,7 +44,7 @@ export const MostPopularDates = () => {
 
         return yesScore;
       })
-      .slice(0, 3)
+      .slice(0, 2)
       .flatMap((optionId) => {
         const option = options.find((o) => o.id === optionId);
         if (option) {
@@ -68,7 +70,7 @@ export const MostPopularDates = () => {
       }
       actions={
         <ButtonLink
-          href={createPollLink("participants")}
+          href={createPollLink("dates")}
           className="w-full"
           icon={CalendarIcon}
         >
@@ -81,35 +83,50 @@ export const MostPopularDates = () => {
       }
     >
       <DragScroll>
-        <div className="flex gap-2.5 bg-gray-100 p-2.5">
+        <div className="flex gap-2.5">
           {bestOptions.map((option) => {
             return (
               <div
                 key={option.id}
                 className="min-w-[300px] grow basis-1/3 divide-y rounded-md border bg-white shadow-sm"
               >
-                <div className="space-y-4 p-4">
-                  <div className="flex items-start justify-between">
-                    <DateCard date={option.start} />
-                    <ParticipantAvatarBar
-                      participants={responses.filter((response) => {
-                        return scoreByOptionId[option.id].yes.includes(
-                          response.id,
-                        );
-                      })}
-                      max={5}
-                    />
+                <div className="space-y-2 p-3">
+                  <div className="flex items-start gap-4">
+                    <DateCard date={option.start} className="shrink-0" />
+                    <div className="overflow-hidden">
+                      <h3 className="truncate">{event?.title}</h3>
+                      {option.duration ? (
+                        <ul className="flex justify-between gap-4">
+                          <li className="font-semibold">
+                            {dayjs(option.start).format("LT")}
+                          </li>
+                          <li className="text-gray-500">
+                            {dayjs
+                              .duration(option.duration, "minutes")
+                              .humanize()}
+                          </li>
+                        </ul>
+                      ) : null}
+                      <div>
+                        <div className="mb-2 text-gray-500">
+                          <Trans
+                            i18nKey="participantCount"
+                            values={{
+                              count: scoreByOptionId[option.id].yes.length,
+                            }}
+                          />
+                        </div>
+                        <ParticipantAvatarBar
+                          participants={responses.filter((response) => {
+                            return scoreByOptionId[option.id].yes.includes(
+                              response.id,
+                            );
+                          })}
+                          max={5}
+                        />
+                      </div>
+                    </div>
                   </div>
-                  {option.duration ? (
-                    <ul className="flex justify-between gap-4">
-                      <li className="font-semibold">
-                        {dayjs(option.start).format("LT")}
-                      </li>
-                      <li className="text-gray-500">
-                        {dayjs.duration(option.duration, "minutes").humanize()}
-                      </li>
-                    </ul>
-                  ) : null}
                 </div>
                 <div className="flex items-center gap-4 px-4 py-2.5">
                   <div className="grow">

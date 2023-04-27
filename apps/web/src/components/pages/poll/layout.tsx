@@ -12,7 +12,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 
-import { DragScroll } from "@/components/drag-scroll";
 import StandardLayout from "@/components/layouts/v3-layout";
 import { ButtonLink } from "@/components/pages/poll/components/button-link";
 import { Trans } from "@/components/trans";
@@ -34,10 +33,10 @@ const MenuItem = (props: {
     <Link
       href={props.href}
       className={clsx(
-        "flex items-center justify-start gap-2 pl-2.5 pr-3 font-medium tracking-tight",
+        "flex w-48 items-center justify-start gap-2 py-1.5 px-2 font-medium tracking-tight",
         router.asPath === props.href
           ? "bg-primary-50 text-primary-600 pointer-events-none"
-          : "bg-gray-100 hover:bg-gray-200 active:bg-gray-300",
+          : "hover:bg-gray-200 active:bg-gray-300",
       )}
     >
       <props.icon className="h-6 shrink-0" />
@@ -98,14 +97,16 @@ const AdminLayoutInner: React.FunctionComponent<{
       <Head>
         <title>{data?.title}</title>
       </Head>
-      <div className="border-y bg-white sm:border-x lg:rounded-md lg:shadow-sm">
-        <div className="rounded-t-md bg-white px-2.5 pt-2.5">
-          <ButtonLink icon={ArrowLeftIcon} href="/polls">
+      <div className="space-y-4">
+        <div className="space-y-4">
+          <Link
+            href="/polls"
+            className="inline-flex items-center gap-2 font-medium tracking-tight text-slate-500 hover:text-slate-800"
+          >
+            <ArrowLeftIcon className="h-4" />
             <Trans i18nKey="back" />
-          </ButtonLink>
-        </div>
-        <div className="sticky top-0 space-y-4 border-b bg-white/75 p-3 backdrop-blur-md sm:px-4">
-          <div className="">
+          </Link>
+          <div>
             <h1 className="text-lg leading-tight tracking-tight md:text-2xl">
               {data?.title}
             </h1>
@@ -117,7 +118,9 @@ const AdminLayoutInner: React.FunctionComponent<{
               />
             </p>
           </div>
-          <div className={clsx("flex h-10 gap-2")}>
+        </div>
+        <div className="flex gap-6">
+          <div className={clsx("flex flex-col gap-2")}>
             {menuItems.map((item, i) => (
               <MenuItem
                 key={i}
@@ -127,9 +130,7 @@ const AdminLayoutInner: React.FunctionComponent<{
               />
             ))}
           </div>
-        </div>
-        <div className="overflow-hidden">
-          <div className="bg-gray-100 p-2">{children}</div>
+          <div className="grow">{children}</div>
         </div>
       </div>
     </>

@@ -55,8 +55,8 @@ const CopyLink = () => {
 
 export const ParticipantLink = () => {
   return (
-    <div className="py-8">
-      <div className="mx-auto max-w-lg rounded-md border-2 border-dashed border-gray-300 p-8 text-center">
+    <div className="rounded-md border-2 border-dashed border-gray-300 py-8 ">
+      <div className="mx-auto max-w-md p-8 text-center">
         <ShareIcon className="mb-4 inline-block h-10" />
         <h2 className="mb-1">
           <Trans

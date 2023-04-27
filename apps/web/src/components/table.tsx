@@ -54,7 +54,7 @@ export const Table = <
                     maxWidth:
                       props.layout === "auto" ? header.getSize() : undefined,
                   }}
-                  className="whitespace-nowrap border-b border-gray-100 px-4 py-2.5 text-left align-bottom text-sm font-semibold"
+                  className="whitespace-nowrap border-b border-gray-100 px-2.5 py-2.5 text-left align-bottom text-sm font-semibold"
                 >
                   {header.isPlaceholder
                     ? null
@@ -74,7 +74,7 @@ export const Table = <
                 <td
                   key={cell.id}
                   className={clsx(
-                    "overflow-hidden border-gray-100 px-4 py-2.5",
+                    "overflow-hidden border-gray-100 px-2.5 py-2.5",
                     {
                       "border-b ": table.getRowModel().rows.length !== i + 1,
                     },
@@ -106,7 +106,7 @@ export const Table = <
         ) : null}
       </table>
       {table.getState().pagination.pageSize < props.data.length ? (
-        <div className="flex justify-end border-t bg-gray-100 px-4 py-2.5">
+        <div className="flex justify-end border-t bg-gray-100 px-2.5 py-2.5">
           <Button
             icon={<ArrowLeftIcon />}
             disabled={table.getState().pagination.pageIndex === 0}
