@@ -1,4 +1,5 @@
 import {
+  ArrowLeftIcon,
   CalendarIcon,
   ChartSquareBarIcon,
   ChatIcon,
@@ -6,14 +7,14 @@ import {
   UsersIcon,
 } from "@rallly/icons";
 import clsx from "clsx";
-import { AnimatePresence, m } from "framer-motion";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
-import { usePrevious } from "react-use";
 
+import { DragScroll } from "@/components/drag-scroll";
 import StandardLayout from "@/components/layouts/v3-layout";
+import { ButtonLink } from "@/components/pages/poll/components/button-link";
 import { Trans } from "@/components/trans";
 import {
   PollIdProvider,
@@ -33,14 +34,14 @@ const MenuItem = (props: {
     <Link
       href={props.href}
       className={clsx(
-        "flex h-10 translate-y-px items-center justify-start gap-2  pl-2.5 pr-3 font-medium tracking-tight",
+        "flex items-center justify-start gap-2 pl-2.5 pr-3 font-medium tracking-tight",
         router.asPath === props.href
           ? "bg-primary-50 text-primary-600 pointer-events-none"
           : "bg-gray-100 hover:bg-gray-200 active:bg-gray-300",
       )}
     >
       <props.icon className="h-6 shrink-0" />
-      {props.title()}
+      <span>{props.title()}</span>
     </Link>
   );
 };
@@ -60,7 +61,6 @@ const AdminLayoutInner: React.FunctionComponent<{
   children?: React.ReactNode;
 }> = ({ children }) => {
   const { data } = useCurrentEvent();
-  const router = useRouter();
   const createPollLink = useCreatePollLink();
   const menuItems = [
     {
@@ -93,20 +93,18 @@ const AdminLayoutInner: React.FunctionComponent<{
     },
   ];
 
-  const index = menuItems.findIndex((item) => router.asPath === item.href);
-
-  const prev = usePrevious(index);
-
-  const shouldReverse = prev !== undefined && prev > index;
-  const multiplier = shouldReverse ? -1 : 1;
-
   return (
     <>
       <Head>
         <title>{data?.title}</title>
       </Head>
-      <div className="border-y bg-gray-100 shadow-sm sm:rounded-md sm:border-x">
-        <div className="sticky top-0 z-10 border-b bg-white p-3 sm:rounded-t-md sm:p-4">
+      <div className="border-y bg-white sm:border-x lg:rounded-md lg:shadow-sm">
+        <div className="rounded-t-md bg-white px-2.5 pt-2.5">
+          <ButtonLink icon={ArrowLeftIcon} href="/polls">
+            <Trans i18nKey="back" />
+          </ButtonLink>
+        </div>
+        <div className="sticky top-0 space-y-4 border-b bg-white/75 p-3 backdrop-blur-md sm:px-4">
           <div className="">
             <h1 className="text-lg leading-tight tracking-tight md:text-2xl">
               {data?.title}
@@ -119,7 +117,7 @@ const AdminLayoutInner: React.FunctionComponent<{
               />
             </p>
           </div>
-          <div className={clsx("mt-4 flex gap-2")}>
+          <div className={clsx("flex h-10 gap-2")}>
             {menuItems.map((item, i) => (
               <MenuItem
                 key={i}
@@ -131,18 +129,7 @@ const AdminLayoutInner: React.FunctionComponent<{
           </div>
         </div>
         <div className="overflow-hidden">
-          <AnimatePresence initial={false} exitBeforeEnter={true}>
-            <m.div
-              key={router.pathname.split("/")[3]}
-              transition={{ duration: 0.2, type: "spring" }}
-              initial={{ opacity: 0, x: -10 * multiplier }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 10 * multiplier }}
-              className="p-2 sm:p-4"
-            >
-              {children}
-            </m.div>
-          </AnimatePresence>
+          <div className="bg-gray-100 p-2">{children}</div>
         </div>
       </div>
     </>

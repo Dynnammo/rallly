@@ -8,14 +8,14 @@
   }
   body,
   #__next {
-    @apply h-full overscroll-none;
+    @apply h-full overflow-y-scroll overscroll-none;
   }
   h1,
   h2,
   h3,
   h4,
   h5 {
-    @apply font-sans font-semibold text-slate-800;
+    @apply font-sans font-semibold tracking-tight;
   }
   h1 {
     @apply text-2xl;

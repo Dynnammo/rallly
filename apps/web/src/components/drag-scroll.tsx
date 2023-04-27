@@ -16,9 +16,11 @@ export function DragScroll(
       scrollContainerRef.current.clientWidth
     : false;
 
+  const isMouseDown = React.useRef(false);
+
   const handleMouseDown: React.MouseEventHandler<HTMLElement> = (event) => {
     if (!scrollContainerRef.current) return;
-    setIsDragging(true);
+    isMouseDown.current = true;
     setStartX(event.pageX - scrollContainerRef.current.offsetLeft);
     setStartY(event.pageY - scrollContainerRef.current.offsetTop);
     setScrollLeft(scrollContainerRef.current.scrollLeft);
@@ -27,8 +29,8 @@ export function DragScroll(
 
   const handleMouseMove: React.MouseEventHandler = (event) => {
     if (!scrollContainerRef.current) return;
-    if (!isDragging) return;
-    event.preventDefault();
+    if (!isMouseDown.current) return;
+    setIsDragging(true);
     const x = event.pageX - scrollContainerRef.current.offsetLeft;
     const y = event.pageY - scrollContainerRef.current.offsetTop;
     const walkX = (x - startX) * 1.5;
@@ -38,6 +40,7 @@ export function DragScroll(
   };
 
   const handleMouseUp: React.MouseEventHandler = () => {
+    isMouseDown.current = false;
     setIsDragging(false);
   };
 
@@ -48,7 +51,7 @@ export function DragScroll(
   return (
     <div
       className={clsx(
-        "scrollbar-thin overscroll-touch scrollbar-thumb-gray-300 overflow-auto",
+        "scrollbar-thin overscroll-touch scrollbar-track-gray-100 scrollbar-thumb-gray-300 overflow-auto",
         isOverflown ? (isDragging ? "cursor-grabbing" : "cursor-grab") : "",
         props.className,
       )}

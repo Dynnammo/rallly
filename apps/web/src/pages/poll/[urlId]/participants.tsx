@@ -1,12 +1,28 @@
 import { withAuthIfRequired, withSessionSsr } from "@rallly/backend/next";
+import { UsersIcon } from "@rallly/icons";
 import { GetServerSideProps } from "next";
 
+import { ParticipantsTable } from "@/components/pages/poll/components/participants-table";
+import { Section } from "@/components/pages/poll/components/section";
 import { getAdminLayout } from "@/components/pages/poll/layout";
+import { Trans } from "@/components/trans";
+import { useCurrentPollResponses } from "@/contexts/current-event";
 import { NextPageWithLayout } from "@/types";
 import { withPageTranslations } from "@/utils/with-page-translations";
 
 const Page: NextPageWithLayout = () => {
-  return <div>participants</div>;
+  const { data: responses = [] } = useCurrentPollResponses();
+  return (
+    <div>
+      <Section
+        icon={UsersIcon}
+        title={<Trans defaults="All Participants" i18nKey="participants" />}
+        subtitle={<Trans defaults="" />}
+      >
+        <ParticipantsTable data={responses} />
+      </Section>
+    </div>
+  );
 };
 
 Page.getLayout = getAdminLayout;

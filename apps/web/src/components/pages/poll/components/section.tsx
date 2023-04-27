@@ -18,17 +18,17 @@ export const Section = ({
     <div className="border-b py-3 px-4">
       <div className="flex gap-1.5">
         {Icon ? (
-          <div className="p-0.5">
+          <div className="p-1">
             <Icon className="h-5" />
           </div>
         ) : null}
         <div>
-          <h2 className="text-base tracking-tight">{title}</h2>
+          <h2 className="mb-1 text-lg tracking-tight">{title}</h2>
         </div>
       </div>
-      <p className="text-gray-500">{subtitle}</p>
+      <p className="hidden leading-tight text-gray-500 sm:block">{subtitle}</p>
     </div>
     <div>{children}</div>
-    {actions ? <div className="border-t bg-gray-50 p-3">{actions}</div> : null}
+    {actions ? <div className="border-t bg-white p-2">{actions}</div> : null}
   </section>
 );

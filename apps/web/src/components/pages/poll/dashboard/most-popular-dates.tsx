@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import React from "react";
 
 import { Button } from "@/components/button";
+import { DragScroll } from "@/components/drag-scroll";
 import { ButtonLink } from "@/components/pages/poll/components/button-link";
 import { DateCard } from "@/components/pages/poll/components/date-card";
 import { Section } from "@/components/pages/poll/components/section";
@@ -79,79 +80,59 @@ export const MostPopularDates = () => {
         </ButtonLink>
       }
     >
-      <div className="flex divide-x">
-        {bestOptions.map((option) => {
-          return (
-            <div
-              key={option.id}
-              className="grow divide-y bg-white md:basis-1/3"
-            >
-              <div className="flex items-start gap-4 p-4">
-                <DateCard date={option.start} />
-                <div>
-                  <ul>
-                    {option.duration ? (
-                      <li>
-                        <Trans
-                          i18nKey="poll.startTime"
-                          values={{
-                            startTime: dayjs(option.start).format("LT"),
-                          }}
-                          components={{ b: <strong /> }}
-                          defaults="<b>Start:</b> {startTime}"
-                        />
+      <DragScroll>
+        <div className="flex gap-2.5 bg-gray-100 p-2.5">
+          {bestOptions.map((option) => {
+            return (
+              <div
+                key={option.id}
+                className="min-w-[300px] grow basis-1/3 divide-y rounded-md border bg-white shadow-sm"
+              >
+                <div className="space-y-4 p-4">
+                  <div className="flex items-start justify-between">
+                    <DateCard date={option.start} />
+                    <ParticipantAvatarBar
+                      participants={responses.filter((response) => {
+                        return scoreByOptionId[option.id].yes.includes(
+                          response.id,
+                        );
+                      })}
+                      max={5}
+                    />
+                  </div>
+                  {option.duration ? (
+                    <ul className="flex justify-between gap-4">
+                      <li className="font-semibold">
+                        {dayjs(option.start).format("LT")}
                       </li>
-                    ) : null}
-                    <li>
-                      <Trans
-                        i18nKey="poll.optionDuration"
-                        values={{
-                          duration:
-                            option.duration === 0
-                              ? "All Day"
-                              : dayjs
-                                  .duration(option.duration, "minutes")
-                                  .humanize(),
-                        }}
-                        components={{ b: <strong /> }}
-                        defaults="<b>Duration:</b> {duration}"
-                      />
-                    </li>
-
-                    <li className="mt-2">
-                      <ParticipantAvatarBar
-                        participants={responses.filter((response) => {
-                          return scoreByOptionId[option.id].yes.includes(
-                            response.id,
-                          );
-                        })}
-                        max={5}
-                      />
-                    </li>
-                  </ul>
+                      <li className="text-gray-500">
+                        {dayjs.duration(option.duration, "minutes").humanize()}
+                      </li>
+                    </ul>
+                  ) : null}
                 </div>
-              </div>
-              <div className="flex items-center gap-4 px-4 py-2.5">
-                <div className="grow">
-                  <VoteSummaryProgressBar
-                    total={responses?.length || 0}
-                    {...option.score}
+                <div className="flex items-center gap-4 px-4 py-2.5">
+                  <div className="grow">
+                    <VoteSummaryProgressBar
+                      total={responses?.length || 0}
+                      {...option.score}
+                    />
+                  </div>
+                  <VoteSummary
+                    {...scoreByOptionId[option.id]}
+                    total={responses.length}
                   />
                 </div>
-                <VoteSummary
-                  {...scoreByOptionId[option.id]}
-                  total={responses.length}
-                />
+                <div className="p-2">
+                  <Button className="w-full" icon={<StarIcon />}>
+                    <Trans i18nKey="poll.book" defaults="Book" />
+                  </Button>
+                </div>
               </div>
-              <div className="p-3">
-                <Button className="w-full" icon={<StarIcon />}>
-                  <Trans i18nKey="poll.book" defaults="Book" />
-                </Button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      </DragScroll>
     </Section>
   );
 };

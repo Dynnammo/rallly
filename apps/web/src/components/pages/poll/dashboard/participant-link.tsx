@@ -1,3 +1,4 @@
+import { ShareIcon } from "@rallly/icons";
 import clsx from "clsx";
 import { useTranslation } from "next-i18next";
 import React from "react";
@@ -54,18 +55,25 @@ const CopyLink = () => {
 
 export const ParticipantLink = () => {
   return (
-    <Section
-      title={<Trans i18nKey="poll.shareLinkTitle" defaults="Share" />}
-      subtitle={
-        <Trans
-          i18nKey="poll.shareLinkSubtitle"
-          defaults="Share this link with your participants to start collecting responses."
-        />
-      }
-    >
-      <div className="bg-gray-50 p-4">
-        <CopyLink />
+    <div className="py-8">
+      <div className="mx-auto max-w-lg rounded-md border-2 border-dashed border-gray-300 p-8 text-center">
+        <ShareIcon className="mb-4 inline-block h-10" />
+        <h2 className="mb-1">
+          <Trans
+            defaults="Share your participant link"
+            i18nKey="poll.shareLink"
+          />
+        </h2>
+        <p className="mb-4 text-gray-500">
+          <Trans
+            defaults="Share the link below with your participants to start collecting responses"
+            i18nKey="poll.shareLinkDescription"
+          />
+        </p>
+        <div>
+          <CopyLink />
+        </div>
       </div>
-    </Section>
+    </div>
   );
 };
