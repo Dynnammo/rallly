@@ -13,11 +13,12 @@ import { GetServerSideProps } from "next";
 
 import { Button } from "@/components/button";
 import { DragScroll } from "@/components/drag-scroll";
+import { DateCard } from "@/components/pages/poll/components/date-card";
+import { DatesTable } from "@/components/pages/poll/components/dates-table";
 import { Section } from "@/components/pages/poll/components/section";
 import { VoteSummary } from "@/components/pages/poll/components/vote-summary";
 import { VoteSummaryProgressBar } from "@/components/pages/poll/components/vote-summary-progress-bar";
 import { getAdminLayout } from "@/components/pages/poll/layout";
-import { Table } from "@/components/table";
 import { Trans } from "@/components/trans";
 import { ParticipantAvatarBar } from "@/components/ui/participant-avatar-bar";
 import {
@@ -28,13 +29,13 @@ import {
 import { NextPageWithLayout } from "@/types";
 import { withPageTranslations } from "@/utils/with-page-translations";
 
-const optionColumnHelpder = createColumnHelper<{
+const optionColumnHelper = createColumnHelper<{
   id: string;
   start: Date;
   duration: number;
 }>();
 
-const DatesTable: NextPageWithLayout = () => {
+const AllDatesTable: NextPageWithLayout = () => {
   const { data: options = [] } = useCurrentPollOptions();
   const { data: responses = [] } = useCurrentPollResponses();
   const scoreByOptionId = useScoreByOptionId();
@@ -50,25 +51,40 @@ const DatesTable: NextPageWithLayout = () => {
       }
     >
       <DragScroll className="rounded-md border">
-        <Table
+        <DatesTable
           layout="auto"
           data={options}
           columns={[
-            optionColumnHelpder.accessor("start", {
+            optionColumnHelper.accessor(
+              (row) =>
+                row.duration > 0
+                  ? dayjs(row.start).format("LL")
+                  : dayjs(row.start).format("MMMM YYYY"),
+              {
+                id: "group",
+                enableGrouping: true,
+                cell: (info) => info.getValue(),
+              },
+            ),
+            optionColumnHelper.accessor("start", {
               header: () => <Trans i18nKey="poll.date" defaults="Date" />,
-              size: 30,
-              cell: (info) => (
-                <div className="flex items-center gap-2 whitespace-nowrap">
-                  <CalendarIcon className="text-primary-600 h-5" />
-                  {dayjs(info.getValue()).format("LL")}
-                </div>
-              ),
+              size: 90,
+              cell: (info) =>
+                info.row.original.duration ? (
+                  <div className="flex items-center gap-2 whitespace-nowrap font-semibold tabular-nums">
+                    <ClockIcon className="h-5" />
+                    {dayjs(info.getValue()).format("LT")}
+                  </div>
+                ) : (
+                  <DateCard date={info.getValue()} />
+                ),
             }),
-            optionColumnHelpder.accessor("duration", {
-              size: 100,
+            optionColumnHelper.accessor("duration", {
+              id: "duration",
+              size: 120,
               header: () => <Trans i18nKey="duration" defaults="Duration" />,
               cell: (info) => (
-                <div className="flex items-center gap-2 whitespace-nowrap">
+                <div className="flex items-center gap-2 whitespace-nowrap text-gray-500">
                   <ClockIcon className="h-5" />
                   {info.getValue() ? (
                     dayjs.duration(info.getValue(), "minutes").humanize()
@@ -78,22 +94,24 @@ const DatesTable: NextPageWithLayout = () => {
                 </div>
               ),
             }),
-            optionColumnHelpder.display({
+            optionColumnHelper.display({
               id: "popularity",
               header: () => (
                 <Trans defaults="Popularity" i18nKey="popularity" />
               ),
-              size: 200,
+              size: 300,
               cell: (info) => {
                 return (
-                  <VoteSummaryProgressBar
-                    {...scoreByOptionId[info.row.original.id]}
-                    total={responses?.length}
-                  />
+                  <div className="min-w-[100px]">
+                    <VoteSummaryProgressBar
+                      {...scoreByOptionId[info.row.original.id]}
+                      total={responses?.length}
+                    />
+                  </div>
                 );
               },
             }),
-            optionColumnHelpder.display({
+            optionColumnHelper.display({
               id: "participants",
               size: 100,
               header: () => (
@@ -112,9 +130,10 @@ const DatesTable: NextPageWithLayout = () => {
                 );
               },
             }),
-            optionColumnHelpder.display({
-              id: "summary",
+            optionColumnHelper.display({
+              id: "attendance",
               size: 100,
+              header: () => null,
               cell: (info) => {
                 return (
                   <VoteSummary
@@ -124,7 +143,7 @@ const DatesTable: NextPageWithLayout = () => {
                 );
               },
             }),
-            optionColumnHelpder.display({
+            optionColumnHelper.display({
               id: "book",
               size: 100,
               header: () => null,
@@ -144,12 +163,7 @@ const DatesTable: NextPageWithLayout = () => {
 const Page: NextPageWithLayout = () => {
   return (
     <div className="space-y-4">
-      <DatesTable />
-      <div className="flex">
-        <Button icon={<PlusIcon />}>
-          <Trans defaults="Add" />
-        </Button>
-      </div>
+      <AllDatesTable />
     </div>
   );
 };

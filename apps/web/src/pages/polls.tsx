@@ -138,7 +138,7 @@ const Page: NextPageWithLayout = () => {
             <Trans defaults="A poll where participants vote for the date of an event" />
           }
         >
-          <div>
+          <div className="rounded-md border">
             {polls.length > 0 ? (
               <Table layout="auto" data={polls} columns={columns} />
             ) : (

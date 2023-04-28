@@ -39,7 +39,12 @@ export const ParticipantsTable = (props: { data: Row[] }) => {
             },
           }),
           participantColumnHelper.accessor("votes", {
-            header: () => <Trans i18nKey="poll.response" defaults="Response" />,
+            header: () => (
+              <Trans
+                i18nKey="poll.participantAvailability"
+                defaults="Availability"
+              />
+            ),
             cell: (info) => {
               return (
                 <div className="flex h-7 items-center gap-1">

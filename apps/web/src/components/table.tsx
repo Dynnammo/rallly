@@ -7,7 +7,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import clsx from "clsx";
-import { useTranslation } from "next-i18next";
 import React from "react";
 
 import { Button } from "@/components/button";
@@ -34,12 +33,11 @@ export const Table = <
     initialState: { pagination: { pageSize } },
     getPaginationRowModel: getPaginationRowModel(),
   });
-  const { t } = useTranslation();
   return (
-    <div className={props.className}>
+    <div className={clsx("rounded-md bg-white", props.className)}>
       <table
         className={clsx(
-          "border-collapse bg-white",
+          "border-collapse",
           props.layout === "auto" ? "w-full table-auto" : "table-fixed",
         )}
       >
