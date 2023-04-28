@@ -56,7 +56,7 @@ export const ParticipantsTable = (props: { data: Row[] }) => {
                     return (
                       <span
                         key={option.id}
-                        className={clsx("h-2 w-2 rounded-sm", {
+                        className={clsx("h-3 w-2 rounded-sm", {
                           "bg-green-500": vote?.type === "yes",
                           "bg-amber-400": vote?.type === "ifNeedBe",
                           "bg-gray-300": vote?.type === "no",
