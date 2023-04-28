@@ -16,6 +16,7 @@ const AllDatesTable: NextPageWithLayout = () => {
   return (
     <Section
       icon={CalendarIcon}
+      border={true}
       title={<Trans i18nKey={"poll.dates"} defaults="Dates" />}
       subtitle={
         <Trans
@@ -24,7 +25,7 @@ const AllDatesTable: NextPageWithLayout = () => {
         />
       }
     >
-      <DragScroll className="rounded-md border">
+      <DragScroll>
         <DatesTable data={options} />
       </DragScroll>
     </Section>

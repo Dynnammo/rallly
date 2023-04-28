@@ -27,6 +27,7 @@
     "@rallly/tailwind-config": "*",
     "@sentry/nextjs": "^7.46.0",
     "@svgr/webpack": "^6.5.1",
+    "@tailwindcss/line-clamp": "^0.4.4",
     "@tailwindcss/typography": "^0.5.9",
     "@tanstack/react-table": "^8.8.5",
     "@vercel/analytics": "^0.1.8",

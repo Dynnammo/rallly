@@ -30,9 +30,11 @@ export function DragScroll(
   const handleMouseMove: React.MouseEventHandler = (event) => {
     if (!scrollContainerRef.current) return;
     if (!isMouseDown.current) return;
-    setIsDragging(true);
     const x = event.pageX - scrollContainerRef.current.offsetLeft;
     const y = event.pageY - scrollContainerRef.current.offsetTop;
+    if (Math.abs(x - startX) > 50) {
+      setIsDragging(true);
+    }
     const walkX = (x - startX) * 1.5;
     const walkY = (y - startY) * 1.5;
     scrollContainerRef.current.scrollLeft = scrollLeft - walkX;
@@ -45,6 +47,7 @@ export function DragScroll(
   };
 
   const handleMouseLeave: React.MouseEventHandler = () => {
+    isMouseDown.current = false;
     setIsDragging(false);
   };
 

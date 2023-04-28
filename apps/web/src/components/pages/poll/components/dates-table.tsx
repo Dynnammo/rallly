@@ -5,7 +5,6 @@ import {
   DotsHorizontalIcon,
 } from "@rallly/icons";
 import {
-  ColumnDef,
   createColumnHelper,
   flexRender,
   getCoreRowModel,

@@ -14,6 +14,7 @@ export const RecentlyVoted = () => {
   const createPollLink = useCreatePollLink();
   return (
     <Section
+      border={true}
       icon={UsersIcon}
       title={
         <Trans i18nKey="poll.recentlyVoted" defaults="Recent Participants" />
@@ -21,7 +22,7 @@ export const RecentlyVoted = () => {
       subtitle={
         <Trans
           i18nKey="poll.recentlyVotedSubtitle"
-          defaults="These participants have responded to your poll."
+          defaults="These participants have responded to your poll"
         />
       }
       actions={

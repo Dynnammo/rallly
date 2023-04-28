@@ -15,6 +15,7 @@ const Page: NextPageWithLayout = () => {
   return (
     <div>
       <Section
+        border={true}
         icon={UsersIcon}
         title={<Trans defaults="All Participants" i18nKey="participants" />}
         subtitle={<Trans defaults="" />}

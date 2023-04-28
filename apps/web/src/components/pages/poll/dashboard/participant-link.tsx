@@ -1,17 +1,26 @@
-import { ShareIcon } from "@rallly/icons";
+import {
+  CalendarIcon,
+  ChartSquareBarIcon,
+  ClipboardCopyIcon,
+  CogIcon,
+  LinkIcon,
+  ShareIcon,
+} from "@rallly/icons";
 import clsx from "clsx";
+import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import toast from "react-hot-toast";
 import { useCopyToClipboard } from "react-use";
 
+import { Button } from "@/components/button";
+import { ButtonLink } from "@/components/pages/poll/components/button-link";
 import { Section } from "@/components/pages/poll/components/section";
 import { Trans } from "@/components/trans";
-import { useCurrentEvent } from "@/contexts/current-event";
+import { useCreatePollLink, useCurrentEvent } from "@/contexts/current-event";
 
 const CopyLink = () => {
   const { data: poll } = useCurrentEvent();
-  const { t } = useTranslation();
 
   const participantUrl = `${window.location.origin}/p/${poll?.participantUrlId}`;
   const [didCopy, setDidCopy] = React.useState(false);
@@ -25,55 +34,72 @@ const CopyLink = () => {
   }, [state]);
 
   return (
-    <div className="relative">
-      <input
-        readOnly={true}
-        className={clsx(
-          "w-full rounded-md border p-2 text-slate-600 transition-colors",
-          {
-            "bg-slate-50 opacity-75": didCopy,
-          },
-        )}
-        value={participantUrl}
-      />
-      <button
-        disabled={didCopy}
-        onClick={() => {
-          copyToClipboard(participantUrl);
-          setDidCopy(true);
-          setTimeout(() => {
-            setDidCopy(false);
-          }, 1000);
-        }}
-        className="absolute top-1/2 right-3 -translate-y-1/2 font-semibold text-slate-800"
-      >
-        {didCopy ? t("copied") : t("copyLink")}
-      </button>
+    <Button
+      className={clsx(
+        "bg-gray-200 px-2 font-normal tracking-tighter",
+        didCopy
+          ? "bg-gray-300 ring-2 ring-gray-300 ring-offset-1 ring-offset-gray-100 hover:bg-gray-300"
+          : "",
+      )}
+      onClick={() => {
+        copyToClipboard(participantUrl);
+        setDidCopy(true);
+        setTimeout(() => {
+          setDidCopy(false);
+        }, 500);
+      }}
+    >
+      <div className="flex w-full justify-between">
+        <div className="truncate">{participantUrl}</div>
+        <ClipboardCopyIcon className={clsx("ml-2 h-5")} />
+      </div>
+    </Button>
+  );
+};
+
+const Field = ({
+  label,
+  children,
+}: React.PropsWithChildren<{ label?: React.ReactNode }>) => {
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="w-32 shrink-0">
+        <label>{label}</label>
+      </div>
+      <div className="grow">{children}</div>
     </div>
   );
 };
 
 export const ParticipantLink = () => {
+  const { data: poll } = useCurrentEvent();
+  const createPollLink = useCreatePollLink();
+  if (!poll) {
+    return null;
+  }
   return (
-    <div className="rounded-md border-2 border-dashed border-gray-300 py-8 ">
-      <div className="mx-auto max-w-md p-8 text-center">
-        <ShareIcon className="mb-4 inline-block h-10" />
-        <h2 className="mb-1">
-          <Trans
-            defaults="Share your participant link"
-            i18nKey="poll.shareLink"
-          />
-        </h2>
-        <p className="mb-4 text-gray-500">
-          <Trans
-            defaults="Share the link below with your participants to start collecting responses"
-            i18nKey="poll.shareLinkDescription"
-          />
-        </p>
-        <div>
-          <CopyLink />
+    <Section
+      border={true}
+      icon={CalendarIcon}
+      actions={
+        <div className="flex flex-col justify-between gap-2.5">
+          <ButtonLink icon={CogIcon} href={createPollLink("settings")}>
+            <Trans defaults="View Settings" />
+          </ButtonLink>
+        </div>
+      }
+      title={<Trans defaults="Event Details" i18nKey="meetingPoll" />}
+    >
+      <div className="bg-white p-3">
+        <div className="space-y-4">
+          <Field label={<Trans i18nKey="description" />}>
+            <p className="line-clamp-2">{poll.description}</p>
+          </Field>
+          <Field label={<Trans i18nKey="location" />}>
+            <p>{poll.location}</p>
+          </Field>
         </div>
       </div>
-    </div>
+    </Section>
   );
 };

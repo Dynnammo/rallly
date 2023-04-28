@@ -19,7 +19,7 @@ const participantColumnHelper = createColumnHelper<ParticipantRow>();
 export const ParticipantsTable = (props: { data: Row[] }) => {
   const { data: options } = useCurrentPollOptions();
   return (
-    <DragScroll className="rounded-md border">
+    <DragScroll>
       <Table
         layout="auto"
         data={props.data}
@@ -48,7 +48,7 @@ export const ParticipantsTable = (props: { data: Row[] }) => {
             cell: (info) => {
               return (
                 <div className="flex h-7 items-center gap-1">
-                  {options?.slice(0, 8).map((option) => {
+                  {options.map((option) => {
                     const vote = info
                       .getValue()
                       .find((v) => v.optionId === option.id);
@@ -59,7 +59,7 @@ export const ParticipantsTable = (props: { data: Row[] }) => {
                         className={clsx("h-2 w-2 rounded-sm", {
                           "bg-green-500": vote?.type === "yes",
                           "bg-amber-400": vote?.type === "ifNeedBe",
-                          "bg-gray-200": vote?.type === "no",
+                          "bg-gray-300": vote?.type === "no",
                         })}
                       />
                     );

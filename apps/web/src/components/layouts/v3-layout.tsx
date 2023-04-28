@@ -1,7 +1,6 @@
-import { AnimatePresence, domMax, LazyMotion, m } from "framer-motion";
+import { domMax, LazyMotion, MotionConfig } from "framer-motion";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import React from "react";
 import { Toaster } from "react-hot-toast";
 
@@ -34,12 +33,14 @@ const AppVersion = () => {
 function GlobalProviders(props: React.PropsWithChildren) {
   return (
     <LazyMotion features={domMax}>
-      <Toaster />
-      <UserProvider>
-        <DayjsProvider>
-          <ModalProvider>{props.children}</ModalProvider>
-        </DayjsProvider>
-      </UserProvider>
+      <MotionConfig reducedMotion="always">
+        <Toaster />
+        <UserProvider>
+          <DayjsProvider>
+            <ModalProvider>{props.children}</ModalProvider>
+          </DayjsProvider>
+        </UserProvider>
+      </MotionConfig>
     </LazyMotion>
   );
 }
@@ -47,23 +48,15 @@ function GlobalProviders(props: React.PropsWithChildren) {
 const StandardLayout: React.FunctionComponent<{
   children?: React.ReactNode;
 }> = ({ children, ...rest }) => {
-  const router = useRouter();
   return (
     <GlobalProviders>
-      <div className="mx-auto min-h-full max-w-5xl lg:p-4 xl:py-8" {...rest}>
+      <div
+        className="mx-auto min-h-full max-w-5xl p-2.5 md:p-4 xl:p-8"
+        {...rest}
+      >
         {process.env.NEXT_PUBLIC_FEEDBACK_EMAIL ? <Feedback /> : null}
         <MobileNavigation />
-        <AnimatePresence initial={false} exitBeforeEnter={true}>
-          <m.div
-            key={router.pathname.split("/")[1]}
-            transition={{ duration: 0.2, type: "spring" }}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-          >
-            {children}
-          </m.div>
-        </AnimatePresence>
+        <div>{children}</div>
         <AppVersion />
       </div>
     </GlobalProviders>

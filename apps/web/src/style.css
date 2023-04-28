@@ -4,11 +4,11 @@
 
 @layer base {
   html {
-    @apply h-full bg-gray-50 font-sans text-base text-slate-800;
+    @apply relative h-full overflow-y-scroll overscroll-none bg-gray-200/50 font-sans text-base text-slate-800 sm:overscroll-auto;
   }
   body,
   #__next {
-    @apply h-full overflow-y-scroll overscroll-none;
+    @apply h-full;
   }
   h1,
   h2,
@@ -33,7 +33,7 @@
   input,
   select,
   textarea {
-    @apply focus-visible:border-transparent focus-visible:shadow-none focus-visible:ring-1 focus-visible:ring-gray-400;
+    @apply focus-visible:ring-primary-600 focus-visible:border-transparent focus-visible:ring-2;
     @apply rounded outline-none;
   }
 
@@ -43,6 +43,9 @@
 }
 
 @layer components {
+  .badge {
+    @apply rounded-full py-0.5 px-1.5 text-xs font-medium tracking-tight text-white ring-1 ring-inset ring-black/10;
+  }
   .text-link {
     @apply text-primary-600 hover:text-primary-600 focus-visible:ring-primary-600 rounded font-medium outline-none hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1;
   }

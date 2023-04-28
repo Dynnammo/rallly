@@ -60,12 +60,13 @@ export const MostPopularDates = () => {
 
   return (
     <Section
+      border={true}
       icon={StarIcon}
-      title={<Trans i18nKey="poll.mostPopular" defaults="Most Popular" />}
+      title={<Trans i18nKey="poll.mostPopular" defaults="Popular Dates" />}
       subtitle={
         <Trans
           i18nKey="poll.bestOptionsDescription"
-          defaults="These are the most popular dates with your participants."
+          defaults="Your participants prefer these dates the most"
         />
       }
       actions={
@@ -82,13 +83,13 @@ export const MostPopularDates = () => {
         </ButtonLink>
       }
     >
-      <DragScroll>
-        <div className="flex gap-2.5">
+      <DragScroll className="p-3">
+        <div className="flex gap-3">
           {bestOptions.map((option) => {
             return (
               <div
                 key={option.id}
-                className="min-w-[300px] grow basis-1/3 divide-y rounded-md border bg-white shadow-sm"
+                className="max-w-xs shrink-0 grow basis-72 select-none divide-y rounded-md border bg-white shadow-sm"
               >
                 <div className="space-y-2 p-3">
                   <div className="flex items-start gap-4">
