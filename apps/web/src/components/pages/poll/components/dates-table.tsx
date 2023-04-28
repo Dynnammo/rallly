@@ -1,31 +1,148 @@
-import { ChevronDownIcon, ChevronRightIcon } from "@rallly/icons";
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  ClockIcon,
+  DotsHorizontalIcon,
+} from "@rallly/icons";
 import {
   ColumnDef,
+  createColumnHelper,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
   getGroupedRowModel,
-  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import clsx from "clsx";
+import dayjs from "dayjs";
 import React from "react";
+import { Trans } from "react-i18next";
 
-export const DatesTable = <
-  T extends { start: Date },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  C extends ColumnDef<T, any>,
->(props: {
-  columns: C[];
-  data: T[];
+import { Button } from "@/components/button";
+import { DateCard } from "@/components/pages/poll/components/date-card";
+import { VoteSummary } from "@/components/pages/poll/components/vote-summary";
+import { VoteSummaryProgressBar } from "@/components/pages/poll/components/vote-summary-progress-bar";
+import { ParticipantAvatarBar } from "@/components/ui/participant-avatar-bar";
+import {
+  useCurrentPollResponses,
+  useScoreByOptionId,
+} from "@/contexts/current-event";
+
+type DateOption = {
+  id: string;
+  start: Date;
+  duration: number;
+};
+const optionColumnHelper = createColumnHelper<DateOption>();
+
+export const DatesTable = (props: {
+  data: DateOption[];
   footer?: React.ReactNode;
   enableTableFooter?: boolean;
   layout?: "fixed" | "auto";
   className?: string;
 }) => {
-  const table = useReactTable<T>({
+  const { data: responses = [] } = useCurrentPollResponses();
+  const scoreByOptionId = useScoreByOptionId();
+
+  const table = useReactTable<DateOption>({
     data: props.data,
-    columns: props.columns,
+    columns: [
+      optionColumnHelper.accessor(
+        (row) =>
+          row.duration > 0
+            ? dayjs(row.start).format("LL")
+            : dayjs(row.start).format("MMMM YYYY"),
+        {
+          id: "group",
+          enableGrouping: true,
+          cell: (info) => info.getValue(),
+        },
+      ),
+      optionColumnHelper.accessor("start", {
+        header: () => <Trans i18nKey="poll.date" defaults="Date" />,
+        size: 90,
+        cell: (info) =>
+          info.row.original.duration ? (
+            <div className="flex items-center gap-2 whitespace-nowrap font-semibold tabular-nums">
+              <ClockIcon className="h-5" />
+              {dayjs(info.getValue()).format("LT")}
+            </div>
+          ) : (
+            <DateCard date={info.getValue()} />
+          ),
+      }),
+      optionColumnHelper.accessor("duration", {
+        id: "duration",
+        size: 120,
+        header: () => <Trans i18nKey="duration" defaults="Duration" />,
+        cell: (info) => (
+          <div className="flex items-center gap-2 whitespace-nowrap text-gray-500">
+            <ClockIcon className="h-5" />
+            {info.getValue() ? (
+              dayjs.duration(info.getValue(), "minutes").humanize()
+            ) : (
+              <Trans i18nKey="allDay" defaults="All-day" />
+            )}
+          </div>
+        ),
+      }),
+      optionColumnHelper.display({
+        id: "popularity",
+        header: () => <Trans defaults="Popularity" i18nKey="popularity" />,
+        size: 300,
+        cell: (info) => {
+          return (
+            <div className="min-w-[100px]">
+              <VoteSummaryProgressBar
+                {...scoreByOptionId[info.row.original.id]}
+                total={responses?.length}
+              />
+            </div>
+          );
+        },
+      }),
+      optionColumnHelper.display({
+        id: "participants",
+        size: 100,
+        header: () => <Trans defaults="Participants" i18nKey="participants" />,
+        cell: (info) => {
+          return (
+            <ParticipantAvatarBar
+              participants={responses.filter((response) => {
+                return scoreByOptionId[info.row.original.id].yes.includes(
+                  response.id,
+                );
+              })}
+              max={5}
+            />
+          );
+        },
+      }),
+      optionColumnHelper.display({
+        id: "attendance",
+        size: 100,
+        header: () => null,
+        cell: (info) => {
+          return (
+            <VoteSummary
+              {...scoreByOptionId[info.row.original.id]}
+              total={responses?.length}
+            />
+          );
+        },
+      }),
+      optionColumnHelper.display({
+        id: "book",
+        size: 100,
+        header: () => null,
+        cell: () => (
+          <div className="text-right">
+            <Button icon={<DotsHorizontalIcon />}></Button>
+          </div>
+        ),
+      }),
+    ],
     getCoreRowModel: getCoreRowModel(),
     // pagination
     initialState: {
@@ -39,12 +156,7 @@ export const DatesTable = <
 
   return (
     <div className={props.className}>
-      <table
-        className={clsx(
-          "border-collapse bg-white",
-          props.layout === "auto" ? "w-full table-auto" : "table-fixed",
-        )}
-      >
+      <table className={clsx("w-full table-auto border-collapse bg-white")}>
         <tbody>
           {table.getRowModel().rows.map((row, i) => {
             if (row.getIsGrouped()) {

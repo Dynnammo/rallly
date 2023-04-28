@@ -13,7 +13,7 @@ export const DateCard = (props: { date: Date; className?: string }) => {
         {dayjs(props.date).format("ddd")}
       </div>
       <div className="py-1">
-        <div className="text-lg font-bold leading-tight">
+        <div className="my-px text-lg font-bold leading-none">
           {dayjs(props.date).format("DD")}
         </div>
         <div className="text-xs font-bold uppercase">
