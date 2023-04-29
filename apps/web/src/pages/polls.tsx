@@ -132,6 +132,7 @@ const Page: NextPageWithLayout = () => {
       </Head>
       <div className="">
         <Section
+          border={false}
           icon={ViewGridIcon}
           title={<Trans defaults="Availability Polls" />}
           subtitle={

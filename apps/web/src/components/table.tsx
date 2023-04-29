@@ -34,7 +34,7 @@ export const Table = <
     getPaginationRowModel: getPaginationRowModel(),
   });
   return (
-    <div className={clsx("bg-white", props.className)}>
+    <div className={clsx(props.className)}>
       <table
         className={clsx(
           "border-collapse",
