@@ -44,7 +44,6 @@ export const MostPopularDates = () => {
 
         return yesScore;
       })
-      .slice(0, 2)
       .flatMap((optionId) => {
         const option = options.find((o) => o.id === optionId);
         if (option) {
@@ -60,13 +59,12 @@ export const MostPopularDates = () => {
 
   return (
     <Section
-      border={true}
       icon={StarIcon}
-      title={<Trans i18nKey="poll.mostPopular" defaults="Popular Dates" />}
+      title={<Trans i18nKey="poll.pickDate" defaults="Pick a Date" />}
       subtitle={
         <Trans
           i18nKey="poll.bestOptionsDescription"
-          defaults="Your participants prefer these dates the most"
+          defaults="When you're ready, choose the best date for your event"
         />
       }
       actions={
@@ -83,13 +81,13 @@ export const MostPopularDates = () => {
         </ButtonLink>
       }
     >
-      <DragScroll className="p-3">
-        <div className="flex gap-3">
-          {bestOptions.map((option) => {
+      <DragScroll className="bg-gray-200/50 p-4">
+        <div className="flex gap-4">
+          {bestOptions.map((option, i) => {
             return (
               <div
                 key={option.id}
-                className="max-w-xs shrink-0 grow basis-72 select-none divide-y rounded-md border bg-white shadow-sm"
+                className="max-w-xs shrink-0 grow basis-72 select-none snap-start divide-y rounded-md border bg-white shadow-sm"
               >
                 <div className="space-y-2 p-3">
                   <div className="flex items-start gap-4">

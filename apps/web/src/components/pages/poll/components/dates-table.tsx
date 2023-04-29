@@ -101,6 +101,20 @@ export const DatesTable = (props: {
           );
         },
       }),
+
+      optionColumnHelper.display({
+        id: "attendance",
+        size: 100,
+        header: () => null,
+        cell: (info) => {
+          return (
+            <VoteSummary
+              {...scoreByOptionId[info.row.original.id]}
+              total={responses?.length}
+            />
+          );
+        },
+      }),
       optionColumnHelper.display({
         id: "participants",
         size: 100,
@@ -114,19 +128,6 @@ export const DatesTable = (props: {
                 );
               })}
               max={5}
-            />
-          );
-        },
-      }),
-      optionColumnHelper.display({
-        id: "attendance",
-        size: 100,
-        header: () => null,
-        cell: (info) => {
-          return (
-            <VoteSummary
-              {...scoreByOptionId[info.row.original.id]}
-              total={responses?.length}
             />
           );
         },

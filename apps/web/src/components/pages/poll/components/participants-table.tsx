@@ -1,4 +1,4 @@
-import { Participant, Vote } from "@rallly/database";
+import { Participant, Vote, VoteType } from "@rallly/database";
 import { DotsHorizontalIcon } from "@rallly/icons";
 import { createColumnHelper } from "@tanstack/react-table";
 import clsx from "clsx";
@@ -7,17 +7,31 @@ import dayjs from "dayjs";
 import { Button } from "@/components/button";
 import { DragScroll } from "@/components/drag-scroll";
 import UserAvatar from "@/components/poll/user-avatar";
-import VoteIcon from "@/components/poll/vote-icon";
 import { Table } from "@/components/table";
+import Tooltip from "@/components/tooltip";
 import { Trans } from "@/components/trans";
 import { useCurrentPollOptions } from "@/contexts/current-event";
+import VoteIcon from "@/components/poll/vote-icon";
 
 type ParticipantRow = Participant & { votes: Vote[] };
 
 const participantColumnHelper = createColumnHelper<ParticipantRow>();
 
-export const ParticipantsTable = (props: { data: Row[] }) => {
-  const { data: options } = useCurrentPollOptions();
+const DateTooltip = (props: {
+  date: Date;
+  duration: number;
+  vote?: VoteType;
+}) => {
+  return (
+    <div className="flex items-center gap-1 py-1">
+      <VoteIcon type={props.vote} />
+      {dayjs(props.date).format("LL")}
+    </div>
+  );
+};
+
+export const ParticipantsTable = (props: { data: ParticipantRow[] }) => {
+  const { data: options = [] } = useCurrentPollOptions();
   return (
     <DragScroll>
       <Table
@@ -47,21 +61,36 @@ export const ParticipantsTable = (props: { data: Row[] }) => {
             ),
             cell: (info) => {
               return (
-                <div className="flex h-7 items-center gap-1">
+                <div className="flex h-7 items-center">
                   {options.map((option) => {
                     const vote = info
                       .getValue()
                       .find((v) => v.optionId === option.id);
 
                     return (
-                      <span
+                      <Tooltip
                         key={option.id}
-                        className={clsx("h-3 w-2 rounded-sm", {
-                          "bg-green-500": vote?.type === "yes",
-                          "bg-amber-400": vote?.type === "ifNeedBe",
-                          "bg-gray-300": vote?.type === "no",
-                        })}
-                      />
+                        restMs={0}
+                        placement="top"
+                        content={
+                          <DateTooltip
+                            vote={vote?.type}
+                            duration={option.duration}
+                            date={option.start}
+                          />
+                        }
+                      >
+                        <span
+                          className={clsx(
+                            "m-px h-4 w-2 rounded-sm ring-gray-300 ring-offset-1 hover:ring-2",
+                            {
+                              "bg-green-500": vote?.type === "yes",
+                              "bg-amber-400": vote?.type === "ifNeedBe",
+                              "bg-gray-300": vote?.type === "no",
+                            },
+                          )}
+                        />
+                      </Tooltip>
                     );
                   })}
                 </div>

@@ -1,23 +1,13 @@
-import {
-  CalendarIcon,
-  ChartSquareBarIcon,
-  ClipboardCopyIcon,
-  CogIcon,
-  LinkIcon,
-  ShareIcon,
-} from "@rallly/icons";
+import { ClipboardCopyIcon, ShareIcon } from "@rallly/icons";
 import clsx from "clsx";
-import Link from "next/link";
-import { useTranslation } from "next-i18next";
 import React from "react";
 import toast from "react-hot-toast";
 import { useCopyToClipboard } from "react-use";
 
 import { Button } from "@/components/button";
-import { ButtonLink } from "@/components/pages/poll/components/button-link";
 import { Section } from "@/components/pages/poll/components/section";
 import { Trans } from "@/components/trans";
-import { useCreatePollLink, useCurrentEvent } from "@/contexts/current-event";
+import { useCurrentEvent } from "@/contexts/current-event";
 
 const CopyLink = () => {
   const { data: poll } = useCurrentEvent();
@@ -36,10 +26,10 @@ const CopyLink = () => {
   return (
     <Button
       className={clsx(
-        "bg-gray-200 px-2 font-normal tracking-tighter",
+        "w-full px-2 font-normal tracking-tight",
         didCopy
-          ? "bg-gray-300 ring-2 ring-gray-300 ring-offset-1 ring-offset-gray-100 hover:bg-gray-300"
-          : "",
+          ? "ring-primary-600 text-primary-600 bg-gray-100 ring-2 ring-offset-1 ring-offset-gray-100 hover:bg-gray-100"
+          : "bg-gray-200",
       )}
       onClick={() => {
         copyToClipboard(participantUrl);
@@ -57,49 +47,19 @@ const CopyLink = () => {
   );
 };
 
-const Field = ({
-  label,
-  children,
-}: React.PropsWithChildren<{ label?: React.ReactNode }>) => {
-  return (
-    <div className="flex flex-col gap-1">
-      <div className="w-32 shrink-0">
-        <label>{label}</label>
-      </div>
-      <div className="grow">{children}</div>
-    </div>
-  );
-};
-
 export const ParticipantLink = () => {
   const { data: poll } = useCurrentEvent();
-  const createPollLink = useCreatePollLink();
   if (!poll) {
     return null;
   }
   return (
     <Section
-      border={true}
-      icon={CalendarIcon}
-      actions={
-        <div className="flex flex-col justify-between gap-2.5">
-          <ButtonLink icon={CogIcon} href={createPollLink("settings")}>
-            <Trans defaults="View Settings" />
-          </ButtonLink>
-        </div>
+      title="Share Link"
+      subtitle={
+        <Trans defaults="Copy this link and share it with your participants to gather responses" />
       }
-      title={<Trans defaults="Event Details" i18nKey="meetingPoll" />}
-    >
-      <div className="bg-white p-3">
-        <div className="space-y-4">
-          <Field label={<Trans i18nKey="description" />}>
-            <p className="line-clamp-2">{poll.description}</p>
-          </Field>
-          <Field label={<Trans i18nKey="location" />}>
-            <p>{poll.location}</p>
-          </Field>
-        </div>
-      </div>
-    </Section>
+      icon={ShareIcon}
+      actions={<CopyLink />}
+    />
   );
 };

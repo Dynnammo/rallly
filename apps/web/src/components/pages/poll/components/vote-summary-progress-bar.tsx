@@ -5,7 +5,7 @@ export const VoteSummaryProgressBar = (props: {
   no: string[];
 }) => {
   return (
-    <div className="flex h-2 grow  overflow-hidden rounded bg-slate-100">
+    <div className="flex h-2 grow overflow-hidden rounded bg-slate-100">
       <div
         className="h-full bg-green-500"
         style={{

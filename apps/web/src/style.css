@@ -4,7 +4,7 @@
 
 @layer base {
   html {
-    @apply relative h-full overflow-y-scroll overscroll-none bg-gray-200/50 font-sans text-base text-slate-800 sm:overscroll-auto;
+    @apply relative h-full overflow-y-scroll overscroll-none bg-gray-200/40 font-sans text-base text-slate-800 sm:overscroll-auto;
   }
   body,
   #__next {
@@ -65,10 +65,10 @@
     @apply focus:ring-rose-500;
   }
   .checkbox {
-    @apply text-primary-600 focus:ring-primary-600 h-4 w-4 rounded border-slate-300 shadow-sm;
+    @apply h-4 w-4 accent-indigo-600;
   }
   .btn {
-    @apply inline-flex h-9 select-none items-center justify-center whitespace-nowrap border px-2.5 font-medium;
+    @apply inline-flex h-9 select-none items-center justify-center whitespace-nowrap rounded border border-transparent px-2.5 font-medium tracking-tight;
   }
   a.btn {
     @apply cursor-pointer hover:no-underline;
@@ -82,21 +82,24 @@
   }
 
   .btn-danger {
-    @apply btn border-rose-600 bg-rose-500 text-white hover:bg-rose-600 focus-visible:ring-rose-500;
+    @apply btn bg-rose-600 text-white hover:bg-rose-700 focus-visible:ring-rose-500 active:bg-rose-500;
   }
   .btn-link {
     @apply text-primary-600 inline-flex items-center underline;
   }
   .btn.btn-disabled {
-    @apply pointer-events-none text-gray-400;
+    @apply pointer-events-none;
   }
   .btn-primary {
-    text-shadow: rgb(0 0 0 / 20%) 0px 1px 1px;
-    @apply btn border-primary-600 bg-primary-600 active:bg-primary-600 text-white hover:bg-opacity-90 focus-visible:ring-offset-1;
+    @apply btn bg-slate-800 text-white hover:bg-slate-900 focus-visible:ring-offset-1 active:bg-slate-700;
   }
 
   a.btn-primary {
     @apply text-white;
+  }
+
+  .btn-disabled {
+    @apply bg-gray-300 text-gray-500;
   }
 
   .segment-button {

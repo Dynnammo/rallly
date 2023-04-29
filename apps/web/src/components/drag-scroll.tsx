@@ -2,7 +2,10 @@ import clsx from "clsx";
 import React from "react";
 
 export function DragScroll(
-  props: React.PropsWithChildren<{ className?: string }>,
+  props: React.PropsWithChildren<{
+    className?: string;
+    onScroll?: (percent: number) => void;
+  }>,
 ) {
   const [isDragging, setIsDragging] = React.useState(false);
   const [startX, setStartX] = React.useState(0);
@@ -55,7 +58,7 @@ export function DragScroll(
     <div
       className={clsx(
         "scrollbar-thin overscroll-touch scrollbar-track-gray-100 scrollbar-thumb-gray-300 overflow-auto",
-        isOverflown ? (isDragging ? "cursor-grabbing" : "cursor-grab") : "",
+        isOverflown ? (isDragging ? "cursor-grabbing" : "") : "",
         props.className,
       )}
       ref={scrollContainerRef}

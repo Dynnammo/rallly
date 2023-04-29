@@ -24,6 +24,7 @@ export interface TooltipProps {
   disabled?: boolean;
   className?: string;
   width?: number;
+  restMs?: number;
 }
 
 const Tooltip: React.FunctionComponent<TooltipProps> = ({
@@ -32,6 +33,7 @@ const Tooltip: React.FunctionComponent<TooltipProps> = ({
   children,
   disabled,
   content,
+  restMs = 150,
   width,
 }) => {
   const arrowRef = React.useRef<HTMLDivElement | null>(null);
@@ -77,7 +79,7 @@ const Tooltip: React.FunctionComponent<TooltipProps> = ({
   const { getReferenceProps, getFloatingProps } = useInteractions([
     useHover(context, {
       enabled: !disabled,
-      restMs: 150,
+      restMs,
     }),
     useRole(context, {
       role: "tooltip",
@@ -102,47 +104,33 @@ const Tooltip: React.FunctionComponent<TooltipProps> = ({
         {children}
       </span>
       <FloatingPortal>
-        <AnimatePresence>
-          {open ? (
-            <m.div
-              className="z-30 rounded-md bg-slate-800 px-2 py-1 text-sm text-slate-100 shadow-md"
-              initial="hidden"
-              transition={{
-                duration: 0.1,
+        {open ? (
+          <div
+            className="z-30 rounded-md bg-slate-800 px-2 py-1 text-sm text-slate-100 shadow-md"
+            {...getFloatingProps({
+              ref: floating,
+              style: {
+                position: strategy,
+                top: y ?? "",
+                left: x ?? "",
+                maxWidth: width,
+              },
+            })}
+          >
+            <div
+              ref={arrowRef}
+              className="absolute rotate-45 bg-slate-800"
+              style={{
+                width: 8,
+                height: 8,
+                left: middlewareData.arrow?.x,
+                top: middlewareData.arrow?.y,
+                [staticSide]: -4,
               }}
-              variants={{
-                hidden: {
-                  opacity: 0,
-                  translateY: placement === "bottom" ? -4 : 4,
-                },
-                show: { opacity: 1, translateY: 0 },
-              }}
-              animate={open ? "show" : "hidden"}
-              {...getFloatingProps({
-                ref: floating,
-                style: {
-                  position: strategy,
-                  top: y ?? "",
-                  left: x ?? "",
-                  maxWidth: width,
-                },
-              })}
-            >
-              <div
-                ref={arrowRef}
-                className="absolute rotate-45 bg-slate-800"
-                style={{
-                  width: 8,
-                  height: 8,
-                  left: middlewareData.arrow?.x,
-                  top: middlewareData.arrow?.y,
-                  [staticSide]: -4,
-                }}
-              />
-              {typeof content === "string" ? preventWidows(content) : content}
-            </m.div>
-          ) : null}
-        </AnimatePresence>
+            />
+            {typeof content === "string" ? preventWidows(content) : content}
+          </div>
+        ) : null}
       </FloatingPortal>
     </>
   );
