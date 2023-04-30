@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { usePoll } from "../../poll-context";
 import { normalizeVotes } from "../mutations";
 import { ParticipantForm, ParticipantFormSubmitted } from "../types";
-import UserAvatar, { You } from "../user-avatar";
+import UserAvatar, { You } from "../participant-avatar";
 import { VoteSelector } from "../vote-selector";
 import ControlledScrollArea from "./controlled-scroll-area";
 import { usePollContext } from "./poll-context";

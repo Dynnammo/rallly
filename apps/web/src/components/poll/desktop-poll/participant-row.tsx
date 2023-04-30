@@ -7,7 +7,7 @@ import { usePoll } from "@/components/poll-context";
 import { useUser } from "@/components/user-provider";
 
 import { ParticipantFormSubmitted } from "../types";
-import UserAvatar from "../user-avatar";
+import UserAvatar from "../participant-avatar";
 import VoteIcon from "../vote-icon";
 import ControlledScrollArea from "./controlled-scroll-area";
 import ParticipantRowForm from "./participant-row-form";

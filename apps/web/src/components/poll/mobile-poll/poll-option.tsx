@@ -7,7 +7,7 @@ import * as React from "react";
 
 import { useParticipants } from "../../participants-provider";
 import { ConnectedScoreSummary } from "../score-summary";
-import UserAvatar from "../user-avatar";
+import UserAvatar from "../participant-avatar";
 import VoteIcon from "../vote-icon";
 import { VoteSelector } from "../vote-selector";
 

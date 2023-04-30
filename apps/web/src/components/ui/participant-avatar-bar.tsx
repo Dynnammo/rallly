@@ -1,6 +1,6 @@
 import clsx from "clsx";
 
-import { ColoredAvatar } from "@/components/poll/user-avatar";
+import { ColoredAvatar } from "@/components/poll/participant-avatar";
 import Tooltip from "@/components/tooltip";
 
 interface ParticipantAvatarBarProps {

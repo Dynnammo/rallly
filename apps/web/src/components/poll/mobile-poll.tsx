@@ -19,7 +19,7 @@ import { isUnclaimed, useUser } from "../user-provider";
 import GroupedOptions from "./mobile-poll/grouped-options";
 import { normalizeVotes, useUpdateParticipantMutation } from "./mutations";
 import { ParticipantForm } from "./types";
-import UserAvatar from "./user-avatar";
+import UserAvatar from "./participant-avatar";
 
 if (typeof window !== "undefined") {
   smoothscroll.polyfill();

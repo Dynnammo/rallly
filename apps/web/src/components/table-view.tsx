@@ -20,7 +20,7 @@ import {
 import { useDayjs } from "../utils/dayjs";
 import { useParticipants } from "./participants-provider";
 import { ScoreSummary } from "./poll/score-summary";
-import UserAvatar from "./poll/user-avatar";
+import UserAvatar from "./poll/participant-avatar";
 import VoteIcon from "./poll/vote-icon";
 import { usePoll } from "./poll-context";
 import Tooltip from "./tooltip";

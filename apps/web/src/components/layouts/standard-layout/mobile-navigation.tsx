@@ -76,7 +76,7 @@ export const MobileNavigation = (props: { className?: string }) => {
           <DropdownItem href="/new" label={t("createNew")} icon={PencilIcon} />
           <DropdownItem
             href="https://support.rallly.co"
-            label={t("common_support")}
+            label={t("common.support")}
             icon={SupportIcon}
           />
           {process.env.NEXT_PUBLIC_BETA === "1" ? (

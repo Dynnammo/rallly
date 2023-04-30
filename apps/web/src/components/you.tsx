@@ -1,6 +1,6 @@
 import { useTranslation } from "next-i18next";
 
-import UserAvatar from "./poll/user-avatar";
+import UserAvatar from "./poll/participant-avatar";
 
 export const You = () => {
   const { t } = useTranslation();

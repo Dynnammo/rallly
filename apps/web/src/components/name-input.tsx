@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { useTranslation } from "next-i18next";
 import * as React from "react";
 
-import UserAvatar from "./poll/user-avatar";
+import UserAvatar from "./poll/participant-avatar";
 
 interface NameInputProps
   extends React.DetailedHTMLProps<

@@ -4,7 +4,7 @@ import { keyBy } from "lodash";
 import { useTranslation } from "next-i18next";
 import React from "react";
 
-import { AvatarColorContext } from "@/components/poll/user-avatar";
+import { AvatarColorContext } from "@/components/poll/participant-avatar";
 import {
   decodeOptions,
   getBrowserTimeZone,

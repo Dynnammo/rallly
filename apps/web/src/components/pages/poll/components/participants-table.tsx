@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 
 import { Button } from "@/components/button";
 import { DragScroll } from "@/components/drag-scroll";
-import UserAvatar from "@/components/poll/user-avatar";
+import UserAvatar from "@/components/poll/participant-avatar";
 import { Table } from "@/components/table";
 import Tooltip from "@/components/tooltip";
 import { Trans } from "@/components/trans";

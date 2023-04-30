@@ -1,7 +1,7 @@
 import { useTranslation } from "next-i18next";
 import * as React from "react";
 
-import { AvatarColorContext } from "@/components/poll/user-avatar";
+import { AvatarColorContext } from "@/components/poll/participant-avatar";
 
 import { useDayjs } from "../../utils/dayjs";
 import DateCard from "../date-card";
