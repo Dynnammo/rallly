@@ -26,7 +26,7 @@ const Preferences = (props: { className?: string }) => {
         <p>Manage your language and region preferences</p>
       </div>
       <div className="space-y-4">
-        <h3> {t("common.language")}</h3>
+        <h3> {t("common_language")}</h3>
         <div className="mb-2 space-y-2">
           <LanguageSelect className="w-full" onChange={() => router.reload()} />
         </div>
