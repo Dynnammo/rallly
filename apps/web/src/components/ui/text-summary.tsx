@@ -13,14 +13,14 @@ export const TextSummary = (props: { text: string; max: number }) => {
       {isExpanded ? <>{props.text}</> : <>{summary}</>}{" "}
       {isExpanded ? (
         <button
-          className="text-sm font-medium tracking-tight text-slate-500 hover:text-slate-800 hover:underline active:text-slate-900"
+          className="font-medium tracking-tight hover:text-slate-800 hover:underline active:text-slate-900"
           onClick={() => setExpanded(false)}
         >
           <Trans defaults="Show less" i18nKey="showLess" />
         </button>
       ) : (
         <button
-          className="text-sm font-medium tracking-tight text-slate-500 hover:text-slate-800 hover:underline active:text-slate-900"
+          className="font-medium tracking-tight hover:text-slate-800 hover:underline active:text-slate-900"
           onClick={() => setExpanded(true)}
         >
           <Trans defaults="Show more" i18nKey="showMore" />

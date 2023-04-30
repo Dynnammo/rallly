@@ -35,11 +35,11 @@ export function DragScroll(
     if (!isMouseDown.current) return;
     const x = event.pageX - scrollContainerRef.current.offsetLeft;
     const y = event.pageY - scrollContainerRef.current.offsetTop;
-    if (Math.abs(x - startX) > 50) {
+    if (Math.abs(x - startX) > 10) {
       setIsDragging(true);
     }
-    const walkX = (x - startX) * 1.5;
-    const walkY = (y - startY) * 1.5;
+    const walkX = (x - startX) * 1.6;
+    const walkY = (y - startY) * 1.6;
     scrollContainerRef.current.scrollLeft = scrollLeft - walkX;
     scrollContainerRef.current.scrollTop = scrollTop - walkY;
   };
@@ -57,7 +57,7 @@ export function DragScroll(
   return (
     <div
       className={clsx(
-        "scrollbar-thin overscroll-touch scrollbar-track-gray-100 scrollbar-thumb-gray-300 overflow-auto",
+        "scrollbar-thin hover:scrollbar-thumb-gray-400/75 active:scrollbar-thumb-gray-400 scrollbar-track-gray-100 scrollbar-thumb-gray-300 overflow-auto",
         isOverflown ? (isDragging ? "cursor-grabbing" : "") : "",
         props.className,
       )}
@@ -67,9 +67,7 @@ export function DragScroll(
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
     >
-      <div className={clsx(isDragging ? "pointer-events-none" : "")}>
-        {props.children}
-      </div>
+      {props.children}
     </div>
   );
 }

@@ -1,13 +1,24 @@
-import { ClipboardCopyIcon, ShareIcon } from "@rallly/icons";
+import {
+  ChevronDoubleDownIcon,
+  ClipboardCopyIcon,
+  InboxIcon,
+  ShareIcon,
+  UsersIcon,
+} from "@rallly/icons";
 import clsx from "clsx";
 import React from "react";
 import toast from "react-hot-toast";
 import { useCopyToClipboard } from "react-use";
 
 import { Button } from "@/components/button";
+import { ParticipantsTable } from "@/components/pages/poll/components/participants-table";
 import { Section } from "@/components/pages/poll/components/section";
+import Tooltip from "@/components/tooltip";
 import { Trans } from "@/components/trans";
-import { useCurrentEvent } from "@/contexts/current-event";
+import {
+  useCurrentEvent,
+  useCurrentPollResponses,
+} from "@/contexts/current-event";
 
 const CopyLink = () => {
   const { data: poll } = useCurrentEvent();
@@ -26,22 +37,30 @@ const CopyLink = () => {
   return (
     <Button
       className={clsx(
-        "w-full px-2 font-normal tracking-tight",
+        "w-full overflow-hidden px-2 font-normal tracking-tight ",
         didCopy
-          ? "ring-primary-600 text-primary-600 bg-gray-100 ring-2 ring-offset-1 ring-offset-gray-100 hover:bg-gray-100"
-          : "bg-gray-200",
+          ? "ring-primary-600 text-primary-600 bg-primary-100 ring-offset-primary-100 hover:bg-primary-100 ring-2 ring-offset-1"
+          : "border-slate-300 bg-gray-100",
       )}
       onClick={() => {
         copyToClipboard(participantUrl);
         setDidCopy(true);
         setTimeout(() => {
           setDidCopy(false);
-        }, 500);
+        }, 1000);
       }}
     >
       <div className="flex w-full justify-between">
-        <div className="truncate">{participantUrl}</div>
-        <ClipboardCopyIcon className={clsx("ml-2 h-5")} />
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="text-sm">Invite Link:</div>
+          <div className="truncate">{participantUrl}</div>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          {didCopy ? <div>Copied</div> : null}
+          <div className="shrink-0">
+            <ClipboardCopyIcon className={clsx("ml-2 h-5 ")} />
+          </div>
+        </div>
       </div>
     </Button>
   );
@@ -49,17 +68,27 @@ const CopyLink = () => {
 
 export const ParticipantLink = () => {
   const { data: poll } = useCurrentEvent();
+  const { data: responses = [] } = useCurrentPollResponses();
   if (!poll) {
     return null;
   }
   return (
-    <Section
-      title="Share Link"
-      subtitle={
-        <Trans defaults="Copy this link and share it with your participants to gather responses" />
-      }
-      icon={ShareIcon}
-      actions={<CopyLink />}
-    />
+    <Section icon={UsersIcon} title={<Trans defaults="Participants" />}>
+      {responses.length > 0 ? (
+        <ParticipantsTable data={responses} />
+      ) : (
+        <div className="mx-auto max-w-xl  space-y-4 p-16 text-center tracking-tight">
+          <div>
+            <InboxIcon className="text-primary-600 inline-block h-12" />
+          </div>
+          <div className="text-lg font-bold">No responses yet</div>
+          <div>
+            Copy your invite link and share it with your participants to start
+            getting responses.
+          </div>
+          <CopyLink />
+        </div>
+      )}
+    </Section>
   );
 };

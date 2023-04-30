@@ -156,7 +156,7 @@ export const DatesTable = (props: {
 
   return (
     <div className={props.className}>
-      <table className={clsx("w-full table-auto border-collapse bg-white")}>
+      <table className={clsx("w-full table-auto border-collapse")}>
         <tbody>
           {table.getRowModel().rows.map((row, i) => {
             if (row.getIsGrouped()) {

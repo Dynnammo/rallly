@@ -122,10 +122,7 @@ const AdminLayoutInner: React.FunctionComponent<{
               />
             ))}
           </div>
-          <div className="min-w-0 grow space-y-4">
-            <PollHeader />
-            {children}
-          </div>
+          <div className="min-w-0 grow space-y-4">{children}</div>
         </div>
       </div>
     </>

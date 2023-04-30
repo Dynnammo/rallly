@@ -1,4 +1,4 @@
-import { CalendarIcon, StarIcon } from "@rallly/icons";
+import { CalendarIcon, ClockIcon, StarIcon } from "@rallly/icons";
 import dayjs from "dayjs";
 import React from "react";
 
@@ -67,87 +67,78 @@ export const MostPopularDates = () => {
           defaults="When you're ready, choose the best date for your event"
         />
       }
-      actions={
-        <ButtonLink
-          href={createPollLink("dates")}
-          className="w-full"
-          icon={CalendarIcon}
-        >
-          <Trans
-            i18nKey="poll.viewAllDates"
-            values={{ count: options.length }}
-            defaults="View {count, plural, one {# Date} other {# Dates}}"
-          />
-        </ButtonLink>
-      }
     >
-      <DragScroll className="bg-gray-200/50 p-4">
-        <div className="flex gap-4">
-          {bestOptions.map((option, i) => {
-            return (
-              <div
-                key={option.id}
-                className="max-w-xs shrink-0 grow basis-72 select-none snap-start divide-y rounded-md border bg-white shadow-sm"
-              >
-                <div className="space-y-2 p-3">
-                  <div className="flex items-start gap-4">
-                    <DateCard date={option.start} className="shrink-0" />
-                    <div className="overflow-hidden">
-                      <h3 className="truncate">{event?.title}</h3>
+      <DragScroll className="flex gap-6 pt-6 pl-4 pb-4 pr-4 sm:pl-6 sm:pt-4">
+        {bestOptions.map((option, i) => {
+          return (
+            <div
+              key={option.id}
+              className="max-w-xs shrink-0 grow basis-1/2 select-none snap-start divide-y rounded-md border bg-white shadow-sm"
+            >
+              <div className="p-3">
+                <div className="flex flex-col items-start gap-3 md:flex-row">
+                  <DateCard
+                    date={option.start}
+                    className="-mt-6 shrink-0 md:mt-0 md:-ml-6"
+                  />
+                  <div className="space-y-3 overflow-hidden">
+                    <div>
+                      <h3 className="truncate pr-2">{event?.title}</h3>
                       {option.duration ? (
-                        <ul className="flex justify-between gap-4">
-                          <li className="font-semibold">
+                        <div className="flex items-center gap-1 text-gray-500">
+                          <div className="">
                             {dayjs(option.start).format("LT")}
-                          </li>
-                          <li className="text-gray-500">
-                            {dayjs
-                              .duration(option.duration, "minutes")
-                              .humanize()}
-                          </li>
-                        </ul>
-                      ) : null}
-                      <div>
-                        <div className="mb-2 text-gray-500">
-                          <Trans
-                            i18nKey="participantCount"
-                            values={{
-                              count: scoreByOptionId[option.id].yes.length,
-                            }}
-                          />
+                          </div>
+                          {" - "}
+                          <div>
+                            {dayjs(option.start)
+                              .add(option.duration, "minute")
+                              .format("LT")}
+                          </div>
                         </div>
-                        <ParticipantAvatarBar
-                          participants={responses.filter((response) => {
-                            return scoreByOptionId[option.id].yes.includes(
-                              response.id,
-                            );
-                          })}
-                          max={5}
+                      ) : null}
+                    </div>
+                    <div>
+                      <div className="mb-2 font-medium">
+                        <Trans
+                          i18nKey="participantCount"
+                          values={{
+                            count: scoreByOptionId[option.id].yes.length,
+                          }}
                         />
                       </div>
+                      <ParticipantAvatarBar
+                        participants={responses.filter((response) => {
+                          return scoreByOptionId[option.id].yes.includes(
+                            response.id,
+                          );
+                        })}
+                        max={5}
+                      />
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 px-4 py-2.5">
-                  <div className="grow">
-                    <VoteSummaryProgressBar
-                      total={responses?.length || 0}
-                      {...option.score}
-                    />
-                  </div>
-                  <VoteSummary
-                    {...scoreByOptionId[option.id]}
-                    total={responses.length}
+              </div>
+              <div className="flex items-center gap-4 px-4 py-2.5">
+                <div className="grow">
+                  <VoteSummaryProgressBar
+                    total={responses?.length || 0}
+                    {...option.score}
                   />
                 </div>
-                <div className="p-2">
-                  <Button className="w-full" icon={<StarIcon />}>
-                    <Trans i18nKey="poll.book" defaults="Book" />
-                  </Button>
-                </div>
+                <VoteSummary
+                  {...scoreByOptionId[option.id]}
+                  total={responses.length}
+                />
               </div>
-            );
-          })}
-        </div>
+              <div className="p-2">
+                <Button className="w-full" icon={<StarIcon />}>
+                  <Trans i18nKey="poll.book" defaults="Book" />
+                </Button>
+              </div>
+            </div>
+          );
+        })}
       </DragScroll>
     </Section>
   );

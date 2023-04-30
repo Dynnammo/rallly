@@ -39,6 +39,7 @@ export const ParticipantsTable = (props: { data: ParticipantRow[] }) => {
         data={props.data}
         columns={[
           participantColumnHelper.accessor("name", {
+            size: 200,
             header: () => <Trans i18nKey="name" defaults="Name" />,
             cell: (info) => {
               return (
@@ -53,6 +54,7 @@ export const ParticipantsTable = (props: { data: ParticipantRow[] }) => {
             },
           }),
           participantColumnHelper.accessor("votes", {
+            size: 200,
             header: () => (
               <Trans
                 i18nKey="poll.participantAvailability"
@@ -62,7 +64,7 @@ export const ParticipantsTable = (props: { data: ParticipantRow[] }) => {
             cell: (info) => {
               return (
                 <div className="flex h-7 items-center">
-                  {options.map((option) => {
+                  {options.map((option, i) => {
                     const vote = info
                       .getValue()
                       .find((v) => v.optionId === option.id);
@@ -71,6 +73,7 @@ export const ParticipantsTable = (props: { data: ParticipantRow[] }) => {
                       <Tooltip
                         key={option.id}
                         restMs={0}
+                        className="grow"
                         placement="top"
                         content={
                           <DateTooltip
@@ -82,8 +85,10 @@ export const ParticipantsTable = (props: { data: ParticipantRow[] }) => {
                       >
                         <span
                           className={clsx(
-                            "m-px h-4 w-2 rounded-sm ring-gray-300 ring-offset-1 hover:ring-2",
+                            "m-0.5 h-2 grow ring-gray-300 ring-offset-1 hover:ring-2",
                             {
+                              "rounded-l": i === 0,
+                              "rounded-r": i === options.length - 1,
                               "bg-green-500": vote?.type === "yes",
                               "bg-amber-400": vote?.type === "ifNeedBe",
                               "bg-gray-300": vote?.type === "no",
@@ -98,7 +103,8 @@ export const ParticipantsTable = (props: { data: ParticipantRow[] }) => {
             },
           }),
           participantColumnHelper.accessor("createdAt", {
-            header: () => <Trans i18nKey="poll.votedOnDate" defaults="Date" />,
+            header: () => <Trans i18nKey="poll.votedOnDate" defaults="Voted" />,
+            size: 100,
             cell: (info) => {
               return (
                 <span className="flex items-center gap-2 whitespace-nowrap text-gray-500">

@@ -40,7 +40,7 @@ export const Section = ({
           <h2 className="text-lg tracking-tight">{title}</h2>
         </div>
       </div>
-      <p className="text-gray-500">{subtitle}</p>
+      <p className="leading-tight text-gray-500">{subtitle}</p>
     </div>
     <div>{children}</div>
     {actions ? <div className="p-2.5">{actions}</div> : null}

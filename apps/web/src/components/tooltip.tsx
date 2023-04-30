@@ -95,6 +95,9 @@ const Tooltip: React.FunctionComponent<TooltipProps> = ({
     return update();
   }, [update, content, refs.reference, refs.floating]);
 
+  if (!content) {
+    return <>{children}</>;
+  }
   return (
     <>
       <span
