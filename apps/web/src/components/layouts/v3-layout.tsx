@@ -1,15 +1,74 @@
+import { LoginIcon, SpinnerIcon, UserCircleIcon } from "@rallly/icons";
+import clsx from "clsx";
 import { domMax, LazyMotion, MotionConfig } from "framer-motion";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 import React from "react";
 import { Toaster } from "react-hot-toast";
 
+import { useUser } from "@/components/user-provider";
 import { DayjsProvider } from "@/utils/dayjs";
 
 import { NextPageWithLayout } from "../../types";
 import ModalProvider from "../modal/modal-provider";
 import { UserProvider } from "../user-provider";
-import { MobileNavigation } from "./standard-layout/mobile-navigation";
+
+export const Navigation = (props: { className?: string }) => {
+  const { user } = useUser();
+  const { t } = useTranslation();
+
+  const router = useRouter();
+
+  const [isBusy, setIsBusy] = React.useState(false);
+
+  React.useEffect(() => {
+    const setBusy = () => setIsBusy(true);
+    const setNotBusy = () => setIsBusy(false);
+    router.events.on("routeChangeStart", setBusy);
+    router.events.on("routeChangeComplete", setNotBusy);
+    return () => {
+      router.events.off("routeChangeStart", setBusy);
+      router.events.off("routeChangeComplete", setNotBusy);
+    };
+  }, [router.events]);
+  return (
+    <div
+      className={clsx(
+        "mb-8 flex w-full shrink-0 items-center justify-between",
+        props.className,
+      )}
+    >
+      <div className="flex items-center">
+        <div className="flex items-center gap-4 px-2">
+          <Link
+            href="/polls"
+            className="transition-all hover:opacity-75 active:translate-y-1"
+          >
+            <Image src="/logo.svg" height={32} width={100} alt="rallly.co" />
+          </Link>
+          {isBusy ? (
+            <SpinnerIcon className="h-4 animate-spin text-slate-500" />
+          ) : null}
+        </div>
+      </div>
+      <div className="flex items-center gap-1">
+        {user.isGuest ? (
+          <Link href="/login" className="btn-default gap-2">
+            <LoginIcon className="h-5" />
+            {t("login")}
+          </Link>
+        ) : null}
+        <Link href="/profile" className="btn-default gap-2">
+          <UserCircleIcon className="h-5" />
+          {user.isGuest ? t("guest") : user.shortName}
+        </Link>
+      </div>
+    </div>
+  );
+};
 
 const Feedback = dynamic(() => import("../feedback"), { ssr: false });
 
@@ -55,7 +114,7 @@ const StandardLayout: React.FunctionComponent<{
         {...rest}
       >
         {process.env.NEXT_PUBLIC_FEEDBACK_EMAIL ? <Feedback /> : null}
-        <MobileNavigation />
+        <Navigation />
         <div>{children}</div>
         <AppVersion />
       </div>
